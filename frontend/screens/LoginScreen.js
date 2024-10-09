@@ -36,9 +36,9 @@ const LoginScreen = ({ navigation }) => {
       />
       {errorMessage ? <Text className="text-red-500">{errorMessage}</Text> : null}
       <Button title="Login" onPress={handleLogin} />
-
-      {/* Adding the Home Button */}
-      <Button title="Home" onPress={() => navigation.navigate("Home")} />
+      
+      {/* Add a button to navigate to the Sign Up screen */}
+      <Button title="Sign Up" onPress={() => navigation.navigate("SignUp")} />
     </View>
   );
 };
