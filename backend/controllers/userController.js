@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 
 // Register a new user
 exports.registerUser = async (req, res) => {
+  console.log(req.body);
   const { name, email, password } = req.body;
   try {
     const userExists = await User.findOne({ email });
@@ -15,7 +16,7 @@ exports.registerUser = async (req, res) => {
     req.session.userId = newUser._id; // create session
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: error });
   }
 };
 
