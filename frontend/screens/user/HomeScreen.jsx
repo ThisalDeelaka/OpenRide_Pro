@@ -13,8 +13,14 @@ const HomeScreen = ({ navigation }) => {
     const fetchBikes = async () => {
       try {
         const response = await api.get("/bikes");
-        setBikes(response.data); // Set the bike data to state
+        // Ensure the response contains data and is an array
+        if (response.data && Array.isArray(response.data)) {
+          setBikes(response.data);
+        } else {
+          throw new Error("Invalid data format");
+        }
       } catch (error) {
+        console.error("Error fetching bikes:", error);
         Alert.alert("Error", "Failed to load bikes");
       }
     };
@@ -42,15 +48,22 @@ const HomeScreen = ({ navigation }) => {
             longitudeDelta: 0.0421,
           }}
         >
-          {bikes.map((bike, index) => (
-            <Marker
-              key={index}
-              coordinate={{ latitude: bike.latitude, longitude: bike.longitude }}
-              title={bike.name}
-              description={bike.status}
-              pinColor="#FF7A00" // Custom pin color
-            />
-          ))}
+          {bikes.length > 0 ? (
+            bikes.map((bike, index) => (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: bike.latitude || 37.78825, // Default if latitude is undefined
+                  longitude: bike.longitude || -122.4324, // Default if longitude is undefined
+                }}
+                title={bike.name || "Unnamed Bike"} // Default if name is undefined
+                description={bike.status || "Status unknown"} // Default if status is undefined
+                pinColor="#FF7A00" // Custom pin color
+              />
+            ))
+          ) : (
+            <Text className="text-center text-gray-500 mt-5">No bikes available</Text>
+          )}
         </MapView>
       </View>
 

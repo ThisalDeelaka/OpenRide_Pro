@@ -37,7 +37,7 @@ const MainNavigator = () => {
 
       {/* User and Admin Flow */}
       <Stack.Screen 
-        name="Home" 
+        name="UserHome" 
         component={BottomTabNavigator} 
         options={{ headerShown: false }}
       />
