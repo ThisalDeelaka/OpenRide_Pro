@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import AllBikesScreen from "../screens/AllBikesScreen";
-import MaintenanceScreen from "../screens/MaintenanceScreen";
-import SecurityScreen from "../screens/SecurityScreen";
-import DashboardScreen from "../screens/AdminDashboardScreen";
+import AllBikesScreen from "../screens/admin/AllBikesScreen";
+import MaintenanceScreen from "../screens/admin/MaintenanceScreen";
+import SecurityScreen from "../screens/admin/SecurityScreen";
+import DashboardScreen from "../screens/admin/DashboardScreen";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

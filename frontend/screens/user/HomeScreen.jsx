@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, Alert } from "react-native";
 import MapView, { Marker, AnimatedRegion } from "react-native-maps";
-import api from "../services/api";
+import api from "../../services/api";
 import * as Location from 'expo-location';
 
 const HomeScreen = ({ navigation }) => {

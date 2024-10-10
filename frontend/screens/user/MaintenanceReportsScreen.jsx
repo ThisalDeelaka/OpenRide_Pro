@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button } from "react-native";
-import api from "../services/api";
+import api from "../../services/api";
 
 const MaintenanceReportsScreen = () => {
   const [bikes, setBikes] = useState([]);
