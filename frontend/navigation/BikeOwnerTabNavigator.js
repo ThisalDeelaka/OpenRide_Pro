@@ -1,9 +1,9 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import ProfileScreen from '../screens/OwnerProfileScreen';
-import MyBikesScreen from '../screens/MyBikesScreen';
-import WalletsScreen from '../screens/WalletsScreen';
-import DashboardScreen from '../screens/OwnerDashboardScreen';
+import ProfileScreen from '../screens/owner/OwnerProfileScreen';
+import MyBikesScreen from '../screens/owner/MyBikesScreen';
+import WalletsScreen from '../screens/owner/WalletsScreen';
+import DashboardScreen from '../screens/owner/OwnerDashboardScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 

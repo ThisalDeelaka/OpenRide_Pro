@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../screens/HomeScreen";
-import RideScreen from "../screens/RideScreen";
+import HomeScreen from "../screens/user/HomeScreen";
+import RideScreen from "../screens/user/RideScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

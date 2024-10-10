@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, Text } from "react-native";
-import api from "../services/api";
+import api from "../../services/api";
 
 const IncidentReportingScreen = ({ navigation, route }) => {
   const [description, setDescription] = useState("");
