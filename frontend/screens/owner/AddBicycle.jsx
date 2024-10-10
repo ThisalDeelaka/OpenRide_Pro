@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../services/api";
 
 const AddBicycle = ({ navigation }) => {
@@ -7,12 +8,41 @@ const AddBicycle = ({ navigation }) => {
   const [lng, setLng] = useState("");
   const [rentalPrice, setRentalPrice] = useState("");
   const [combinationLock, setCombinationLock] = useState("");
+  const [ownerId, setOwnerId] = useState(""); // State for ownerId
+
+  useEffect(() => {
+    // Retrieve the user/ownerId from AsyncStorage when the component mounts
+    const fetchOwnerId = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem("user");
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          console.log("Parsed user:", user); // Add this log to check the parsed value
+          setOwnerId(user.id); // Use 'id' instead of '_id'
+        } else {
+          console.log("No user found in AsyncStorage");
+        }
+      } catch (error) {
+        console.error("Error fetching ownerId from AsyncStorage", error);
+      }
+    };
+    fetchOwnerId();
+  }, []);
 
   const handleAddBicycle = async () => {
+    if (!ownerId) {
+      Alert.alert(
+        "Error",
+        "Unable to find owner details. Please log in again."
+      );
+      return;
+    }
+
     try {
       const currentLocation = { lat: parseFloat(lat), lng: parseFloat(lng) }; // Create the object with lat and lng
 
       const formData = {
+        ownerId, // Add the ownerId from the logged-in user
         currentLocation,
         rentalPrice,
         combinationLock,
