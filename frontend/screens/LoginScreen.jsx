@@ -35,8 +35,8 @@ const LoginScreen = ({ navigation }) => {
     <View className="flex-1 justify-center items-center bg-[#F3F4F6] p-6">
       {/* OpenRide Logo */}
       <Image
-        source={{ uri: 'https://example.com/openride-logo.png' }} // Replace with your logo URL
-        className="w-40 h-40 mb-6"
+        source={require('../assets/logo.png')} 
+        className="w-48 h-48 mb-6"  
         resizeMode="contain"
       />
 
