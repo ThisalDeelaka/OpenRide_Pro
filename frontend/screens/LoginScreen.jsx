@@ -19,7 +19,7 @@ const LoginScreen = ({ navigation }) => {
         
         // Navigate based on user role
         if (user.role === 'user') {
-          navigation.navigate("Home");
+          navigation.navigate("UserHome");
         } else if (user.role === 'admin') {
           navigation.navigate("AdminNav");
         } else if (user.role === 'bikeOwner') {

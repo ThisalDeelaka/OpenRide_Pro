@@ -26,7 +26,7 @@ exports.startRide = async (req, res) => {
   }
 };
 
-// End a ride and calculate fare
+// End a ride and calculate fare based on time
 exports.endRide = async (req, res) => {
   const { rideId, endLocation } = req.body;
   try {
@@ -37,24 +37,27 @@ exports.endRide = async (req, res) => {
 
     const bike = await Bike.findById(ride.bikeId);
 
-    // Calculate distance (using a helper function)
-    const distance = calculateDistance(ride.startLocation, endLocation); // We’ll add this function later
+    // Calculate distance (for user reference only, not for fare)
+    const distance = calculateDistance(ride.startLocation, endLocation);
 
-    // Calculate fare
+    // Calculate fare based on time duration
     const durationInHours = (Date.now() - new Date(ride.startTime)) / 3600000;
-    const totalFare = durationInHours * bike.rentalPrice; // Simple pricing model
+    const totalFare = durationInHours * bike.rentalPrice;
 
+    // Update ride with end location, time, and calculated fare
     ride.endLocation = endLocation;
     ride.endTime = Date.now();
-    ride.distance = distance;
-    ride.totalFare = totalFare;
+    ride.distance = distance; // Store distance in the database
+    ride.totalFare = totalFare; // Store fare based on time
+
     await ride.save();
 
     // Mark the bike as available again
     bike.status = 'available';
     await bike.save();
 
-    res.json({ message: 'Ride ended successfully', totalFare });
+    // Return the total fare and distance to the user
+    res.json({ message: 'Ride ended successfully', totalFare, distance });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

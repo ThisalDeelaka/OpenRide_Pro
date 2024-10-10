@@ -15,7 +15,8 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "We need your location to show nearby bikes."
+        "NSLocationWhenInUseUsageDescription": "We need your location to show nearby bikes.",
+        "NSCameraUsageDescription": "We need your camera to scan QR codes."
       }
     },
     "android": {
