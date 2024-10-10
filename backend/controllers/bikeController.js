@@ -56,3 +56,16 @@ exports.deleteBike = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.getBikesByOwner = async (req, res) => {
+  const { ownerId } = req.params;
+  
+  try {
+    const bikes = await Bike.find({ ownerId });
+    res.status(200).json(bikes);
+  } catch (error) {
+    console.error("Error fetching owner's bikes:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
