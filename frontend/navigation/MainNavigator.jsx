@@ -4,11 +4,14 @@ import LoginScreen from "../screens/LoginScreen";
 import SignUpScreen from "../screens/SignUpScreen"; // Import SignUpScreen
 import BottomTabNavigator from "./BottomTabNavigator";
 import AdminDashboardScreen from "../screens/admin/AdminDashboardScreen";
-import MaintenanceReportsScreen from "../screens/user/MaintenanceReportsScreen";
+import MaintenanceReportsScreen from "../screens/incident/MaintenanceReportsScreen";
 import AdminBottomTabNavigator from "./AdminBottomTabNavigator";
 import OwnerBottomTabNavigator from "./BikeOwnerTabNavigator";
 import OnboardingScreen from "../screens/onboarding/OnboardingScreen"; // Import OnboardingScreen
+
 import AddBicycle from "../screens/owner/AddBicycle"; // Import AddBicycle
+
+import BikeListScreen from "../screens/user/BikeListScreen";
 
 const Stack = createStackNavigator();
 
@@ -36,7 +39,7 @@ const MainNavigator = () => {
 
       {/* User and Admin Flow */}
       <Stack.Screen
-        name="Home"
+        name="UserHome"
         component={BottomTabNavigator}
         options={{ headerShown: false }}
       />
@@ -63,6 +66,11 @@ const MainNavigator = () => {
       <Stack.Screen
         name="AddBicycle"
         component={AddBicycle}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="NearBikeList"
+        component={BikeListScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

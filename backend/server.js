@@ -28,6 +28,7 @@ app.use(
 connectDB();
 
 // Routes
+
 app.use("/api/users", userRoutes);
 app.use("/api/rides", rideRoutes);
 app.use("/api/incidents", incidentRoutes);
