@@ -9,8 +9,8 @@ const bikeSchema = new mongoose.Schema({
   currentLocation: { type: { lat: Number, lng: Number }, required: true },
   status: {
     type: String,
-    enum: ["available", "maintenance,Unavailable"],
-    default: "Unavailable",
+    enum: ["available", "maintenance"],
+    default: "available",
   },
   rentalPrice: { type: Number, required: true },
   combinationLock: { type: String, required: true }, // Field for combination lock
