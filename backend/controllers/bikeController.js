@@ -30,7 +30,6 @@ const upload = multer({
 });
 
 exports.upload = upload.single("bikeImage");
-z;
 
 // Register a new bike
 exports.registerBike = async (req, res) => {
@@ -74,5 +73,18 @@ exports.updateBikeStatus = async (req, res) => {
     res.json({ message: "Bike status updated successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
+  }
+};
+// Delete a bike
+exports.deleteBike = async (req, res) => {
+  const { bikeId } = req.params; // Get bikeId from request parameters
+  try {
+    const bike = await Bike.findByIdAndDelete(bikeId); // Delete the bike
+    if (!bike) {
+      return res.status(404).json({ message: 'Bike not found' }); // Handle case where bike does not exist
+    }
+    res.json({ message: 'Bike deleted successfully' }); // Send success response
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
   }
 };
