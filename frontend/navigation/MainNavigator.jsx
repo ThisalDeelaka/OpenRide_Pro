@@ -13,6 +13,8 @@ import AddBicycle from "../screens/owner/AddBicycle"; // Import AddBicycle
 
 import BikeListScreen from "../screens/user/BikeListScreen";
 
+
+
 const Stack = createStackNavigator();
 
 const MainNavigator = () => {
@@ -73,6 +75,7 @@ const MainNavigator = () => {
         component={BikeListScreen}
         options={{ headerShown: false }}
       />
+      
     </Stack.Navigator>
   );
 };
