@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"; 
 import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/user/HomeScreen";
@@ -20,19 +20,22 @@ const BottomTabNavigator = () => {
 
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "Ride") {
+          } else if (route.name === "QRScannerScreen") {
             iconName = focused ? "qr-code-outline" : "qr-code-outline";  // QR code icon
           } else if (route.name === "Profile") {
             iconName = focused ? "person" : "person-outline";
           }
 
-          return <Ionicons name={iconName} size={focused ? 28 : 24} color={color} />;
+          // Increase the size of the icons for Home and Profile
+          const iconSize = route.name === "Home" || route.name === "Profile" ? (focused ? 32 : 28) : (focused ? 28 : 24);
+
+          return <Ionicons name={iconName} size={iconSize} color={color} />;
         },
         tabBarActiveTintColor: "#175E5E",  // Teal color for active icons
         tabBarInactiveTintColor: "#A0AEC0",  // Soft gray for inactive icons
         tabBarShowLabel: false,  // Hide label for a clean look
         tabBarStyle: {
-          backgroundColor: "#F0F4F8",  // Slightly darker background for navbar
+          backgroundColor: "#B8D8D6",  // Updated background color
           height: 70,  // Height of the navbar
           paddingBottom: insets.bottom + 10,  // Padding for safe area
           paddingTop: 10,
@@ -43,7 +46,7 @@ const BottomTabNavigator = () => {
           elevation: 15,  // Elevation for Android devices
         },
         tabBarIconStyle: {
-          marginBottom: route.name === "Ride" ? -10 : 0, // Slightly lift central QR code button
+          marginBottom: route.name === "QRScannerScreen" ? -10 : 0, // Slightly lift central QR code button
         },
       })}
     >

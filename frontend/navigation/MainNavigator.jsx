@@ -7,12 +7,11 @@ import AdminDashboardScreen from "../screens/admin/AdminDashboardScreen";
 import MaintenanceReportsScreen from "../screens/incident/MaintenanceReportsScreen";
 import AdminBottomTabNavigator from "./AdminBottomTabNavigator";
 import OwnerBottomTabNavigator from "./BikeOwnerTabNavigator";
-import OnboardingScreen from "../screens/onboarding/OnboardingScreen"; // Import OnboardingScreen
-
+import OnboardingScreen from "../screens/onboarding/OnboardingScreen";
+import AllBikesScreen from "../screens/admin/AllBikesScreen"; // Import AllBikesScreen
 import AddBicycle from "../screens/owner/AddBicycle"; // Import AddBicycle
-
 import BikeListScreen from "../screens/user/BikeListScreen";
-
+import MaintenanceScreen from "../screens/admin/MaintenanceScreen";
 
 
 const Stack = createStackNavigator();
@@ -75,7 +74,16 @@ const MainNavigator = () => {
         component={BikeListScreen}
         options={{ headerShown: false }}
       />
-      
+      <Stack.Screen 
+        name="AllBikes" 
+        component={AllBikesScreen} 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="AdminMaintain" 
+        component={MaintenanceScreen} 
+        options={{ headerShown: false }} 
+      />
     </Stack.Navigator>
   );
 };
