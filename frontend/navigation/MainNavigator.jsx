@@ -8,8 +8,10 @@ import MaintenanceReportsScreen from "../screens/incident/MaintenanceReportsScre
 import AdminBottomTabNavigator from "./AdminBottomTabNavigator";
 import OwnerBottomTabNavigator from "./BikeOwnerTabNavigator";
 import OnboardingScreen from "../screens/onboarding/OnboardingScreen"; // Import OnboardingScreen
-import BikeListScreen from "../screens/user/BikeListScreen";
 
+import AddBicycle from "../screens/owner/AddBicycle"; // Import AddBicycle
+
+import BikeListScreen from "../screens/user/BikeListScreen";
 
 const Stack = createStackNavigator();
 
@@ -22,51 +24,55 @@ const MainNavigator = () => {
         component={OnboardingScreen}
         options={{ headerShown: false }}
       />
-      
+
       {/* Login and SignUp Flow */}
-      <Stack.Screen 
-        name="Login" 
-        component={LoginScreen} 
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen 
-        name="SignUp" 
-        component={SignUpScreen} 
+      <Stack.Screen
+        name="SignUp"
+        component={SignUpScreen}
         options={{ headerShown: false }} // Hide header for Sign Up if you want
       />
 
       {/* User and Admin Flow */}
-      <Stack.Screen 
-        name="UserHome" 
-        component={BottomTabNavigator} 
+      <Stack.Screen
+        name="UserHome"
+        component={BottomTabNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen 
-        name="AdminNav" 
-        component={AdminBottomTabNavigator} 
+      <Stack.Screen
+        name="AdminNav"
+        component={AdminBottomTabNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen 
-        name="OwnerNav" 
-        component={OwnerBottomTabNavigator} 
+      <Stack.Screen
+        name="OwnerNav"
+        component={OwnerBottomTabNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen 
-        name="AdminDashboard" 
-        component={AdminDashboardScreen} 
+      <Stack.Screen
+        name="AdminDashboard"
+        component={AdminDashboardScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen 
-        name="MaintenanceReports" 
-        component={MaintenanceReportsScreen} 
+      <Stack.Screen
+        name="MaintenanceReports"
+        component={MaintenanceReportsScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen 
-        name="NearBikeList" 
-        component={BikeListScreen} 
+      <Stack.Screen
+        name="AddBicycle"
+        component={AddBicycle}
         options={{ headerShown: false }}
       />
-      
+      <Stack.Screen
+        name="NearBikeList"
+        component={BikeListScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };
