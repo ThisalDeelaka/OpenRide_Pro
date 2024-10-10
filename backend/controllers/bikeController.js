@@ -1,17 +1,52 @@
 const Bike = require('../models/Bike');
+const multer = require('multer');
+const path = require('path');
 
+// Multer configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Directory where images will be stored
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Use current timestamp to avoid conflicts
+  }
+});
+
+const upload = multer({ 
+  storage, 
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|jpg|png/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimeType = fileTypes.test(file.mimetype);
+
+    if (mimeType && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only images (jpeg, jpg, png) are allowed!'));
+    }
+  }
+});
+
+exports.upload = upload.single('bikeImage'); z
+
+// Register a new bike
 exports.registerBike = async (req, res) => {
-  const { currentLocation, rentalPrice } = req.body;
+  const { currentLocation, rentalPrice, combinationLock } = req.body;
   try {
+    const bikeImage = req.file ? req.file.filename : null; // Save filename if image is uploaded
+
     const newBike = new Bike({
-      ownerId: req.session.userId,
+      ownerId,
       currentLocation,
-      rentalPrice
+      rentalPrice,
+      combinationLock,
+      bikeImage 
     });
+
     await newBike.save();
-    res.status(201).json({ message: 'Bike registered successfully' });
+    res.status(201).json({ message: 'Bike registered successfully', bike: newBike });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error });
   }
 };
 
@@ -22,6 +57,6 @@ exports.updateBikeStatus = async (req, res) => {
     await Bike.findByIdAndUpdate(bikeId, { status });
     res.json({ message: 'Bike status updated successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error });
   }
 };
