@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, Text, ActivityIndicator, Alert, Animated } from "react-native";
+import { View, TextInput, TouchableOpacity, Text, ActivityIndicator, Animated } from "react-native";
 import api from "../services/api"; // Your axios instance to handle API requests
 
 const SignUpScreen = ({ navigation }) => {
@@ -32,12 +32,14 @@ const SignUpScreen = ({ navigation }) => {
   // Handle Sign Up
   const handleSignUp = async () => {
     const validationErrors = {};
+
     if (!name) validationErrors.name = "Name is required";
     if (!email || !email.includes("@")) validationErrors.email = "Please enter a valid email";
     if (!password || password.length < 6) validationErrors.password = "Password must be at least 6 characters long";
 
+    // If there are validation errors, stop execution and display the error messages
     if (Object.keys(validationErrors).length > 0) {
-      setErrorMessage(validationErrors);
+      setErrorMessage(validationErrors); // Set the error object
       return;
     }
 
@@ -137,8 +139,14 @@ const SignUpScreen = ({ navigation }) => {
         style={{ elevation: 3 }} // Subtle elevation for form fields
       />
 
-      {/* Error Message */}
-      {errorMessage ? <Text className="text-red-500 mb-4 text-base">{errorMessage}</Text> : null}
+      {/* Error Messages */}
+      {errorMessage && typeof errorMessage === "object" ? (
+        Object.values(errorMessage).map((msg, index) => (
+          <Text key={index} className="text-red-500 mb-4 text-base">{msg}</Text>
+        ))
+      ) : (
+        <Text className="text-red-500 mb-4 text-base">{errorMessage}</Text>
+      )}
 
       {/* Success Message */}
       {successMessage ? <Text className="text-green-500 mb-4 text-base">{successMessage}</Text> : null}

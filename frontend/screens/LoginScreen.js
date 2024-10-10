@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, TextInput, Text, TouchableOpacity, Image } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage'; // For local storage
 import api from "../services/api";
 
 const LoginScreen = ({ navigation }) => {
@@ -10,8 +11,20 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = async () => {
     try {
       const response = await api.post("/users/login", { email, password });
-      if (response.data) {
-        navigation.navigate("Home");
+      const { user } = response.data; // Get user details from response
+
+      if (user) {
+        // Save user details in local storage for later use
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+        
+        // Navigate based on user role
+        if (user.role === 'user') {
+          navigation.navigate("Home");
+        } else if (user.role === 'admin') {
+          navigation.navigate("AdminNav");
+        } else if (user.role === 'bikeOwner') {
+          navigation.navigate("OwnerNav");
+        }
       }
     } catch (error) {
       setErrorMessage("Invalid login credentials");

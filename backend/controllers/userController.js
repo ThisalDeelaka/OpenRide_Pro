@@ -3,20 +3,25 @@ const bcrypt = require('bcryptjs');
 
 // Register a new user
 exports.registerUser = async (req, res) => {
-  console.log(req.body);
-  const { name, email, password } = req.body;
+  const { name, email, password, accountType } = req.body; // accountType will be 'user' or 'bikeOwner'
   try {
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'Email already registered' });
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ name, email, password: hashedPassword });
+    
+    // Assign role based on accountType
+    const role = accountType === 'bikeOwner' ? 'bikeOwner' : 'user';
+
+    const newUser = new User({ name, email, password: hashedPassword, role });
     await newUser.save();
+    
     req.session.userId = newUser._id; // create session
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
-    res.status(500).json({ message: error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -32,12 +37,22 @@ exports.loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
+    
+    // Return user details (excluding password)
+    const userDetails = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+    
     req.session.userId = user._id; // create session
-    res.json({ message: 'Login successful' });
+    res.json({ message: 'Login successful', user: userDetails });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 // User logout
 exports.logoutUser = (req, res) => {
