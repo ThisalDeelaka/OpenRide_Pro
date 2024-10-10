@@ -8,6 +8,7 @@ import MaintenanceReportsScreen from "../screens/incident/MaintenanceReportsScre
 import AdminBottomTabNavigator from "./AdminBottomTabNavigator";
 import OwnerBottomTabNavigator from "./BikeOwnerTabNavigator";
 import OnboardingScreen from "../screens/onboarding/OnboardingScreen"; // Import OnboardingScreen
+import SupportChatScreen from "../screens/incident/SupportChatScreen"; // Import SupportChatScreen
 
 import AddBicycle from "../screens/owner/AddBicycle"; // Import AddBicycle
 
@@ -73,6 +74,11 @@ const MainNavigator = () => {
       <Stack.Screen
         name="NearBikeList"
         component={BikeListScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="SupportChat"
+        component={SupportChatScreen}
         options={{ headerShown: false }}
       />
       

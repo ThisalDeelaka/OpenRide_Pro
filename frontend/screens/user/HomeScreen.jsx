@@ -6,7 +6,7 @@ import api from "../../services/api";
 import MapView, { Marker } from 'react-native-maps';
 
 // Drawer menu component rendered as an overlay (sidebar)
-const DrawerMenu = ({ visible, onClose }) => {
+const DrawerMenu = ({ visible, onClose,navigation }) => {
   return (
     <Modal
       visible={visible}
@@ -37,7 +37,7 @@ const DrawerMenu = ({ visible, onClose }) => {
             <Text className="ml-4 text-lg text-[#175E5E]">FAQ</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center">
+          <TouchableOpacity className="flex-row items-center" onPress={() => navigation.navigate("SupportChat")}>
             <Ionicons name="chatbox-outline" size={22} color="#175E5E" />
             <Text className="ml-4 text-lg text-[#175E5E]">Support Chat</Text>
           </TouchableOpacity>
@@ -102,7 +102,7 @@ const HomeScreen = ({ navigation }) => {
             longitudeDelta: 0.0421,
           }}
         >
-          {bikes.length > 0 ? (
+          {/*{bikes.length > 0 ? (
             bikes.map((bike, index) => (
               <Marker
                 key={index}
@@ -117,7 +117,7 @@ const HomeScreen = ({ navigation }) => {
             ))
           ) : (
             <Text className="text-center text-gray-500 mt-5">No bikes available</Text>
-          )}
+          )}*/}
         </MapView>
       </View>
 
