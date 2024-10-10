@@ -2,15 +2,14 @@ const express = require("express");
 const {
   registerBike,
   updateBikeStatus,
-  upload,
   getAllBikes,
-  deleteBike ,
+  deleteBike,
 } = require("../controllers/bikeController");
 const router = express.Router();
 
 router.get("/", getAllBikes);
-router.post("/register", upload, registerBike);
+router.post("/register", registerBike);
 router.put("/status", updateBikeStatus);
-router.delete('/:bikeId', deleteBike); // Add this line to handle bike deletion
+router.delete("/:bikeId", deleteBike); // Handle bike deletion
 
 module.exports = router;

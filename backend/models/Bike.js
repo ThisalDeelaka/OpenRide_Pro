@@ -13,8 +13,7 @@ const bikeSchema = new mongoose.Schema({
     default: "available",
   },
   rentalPrice: { type: Number, required: true },
-  combinationLock: { type: String, required: true }, // New field for combination lock
-  bikeImage: { type: String }, // URL or path to the stored bike image
+  combinationLock: { type: String, required: true }, // Field for combination lock
 });
 
 module.exports = mongoose.model("Bike", bikeSchema);
