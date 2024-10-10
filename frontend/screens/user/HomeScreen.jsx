@@ -1,82 +1,86 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, Alert } from "react-native";
-import MapView, { Marker, AnimatedRegion } from "react-native-maps";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import api from "../../services/api";
-import * as Location from 'expo-location';
+import MapView, { Marker } from 'react-native-maps';
 
 const HomeScreen = ({ navigation }) => {
   const [bikes, setBikes] = useState([]);
-  const [currentLocation, setCurrentLocation] = useState(null);
-  const [mapRegion, setMapRegion] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
 
+  // Fetch the list of bikes from the server
   useEffect(() => {
     const fetchBikes = async () => {
-      const response = await api.get("/bikes");
-      setBikes(response.data);
+      try {
+        const response = await api.get("/bikes");
+        setBikes(response.data); // Set the bike data to state
+      } catch (error) {
+        Alert.alert("Error", "Failed to load bikes");
+      }
     };
 
     fetchBikes();
   }, []);
 
-  const fetchUserLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission to access location was denied');
-      return;
-    }
-
-    let location = await Location.getCurrentPositionAsync({});
-    setCurrentLocation({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    });
-
-    // Update the map region to the user's current location
-    setMapRegion({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      latitudeDelta: 0.015,
-      longitudeDelta: 0.0121,
-    });
-  };
-
   return (
-    <View className="flex-1">
-      <MapView
-        style={{ flex: 1 }}
-        region={mapRegion}
-        onRegionChangeComplete={region => setMapRegion(region)}
-      >
-        {currentLocation && (
-          <Marker
-            coordinate={{
-              latitude: currentLocation.latitude,
-              longitude: currentLocation.longitude,
-            }}
-            title="Your Location"
-            pinColor="blue"
-          />
-        )}
+    <SafeAreaView className="flex-1 bg-gray-50 px-5">
+      
+      {/* Header Section */}
+      <View className="mt-5">
+        <Text className="text-3xl font-bold text-teal-800">Hello, Matheesha</Text>
+        <Text className="text-lg text-gray-500 mt-1">Your nearest bike is waiting!</Text>
+      </View>
 
-        {bikes.map((bike) => (
-          <Marker
-            key={bike._id}
-            coordinate={{
-              latitude: bike.currentLocation.lat,
-              longitude: bike.currentLocation.lng,
-            }}
-            title={`Bike ${bike._id}`}
-          />
-        ))}
-      </MapView>
-      <Button title="Go to My Location" onPress={fetchUserLocation} />
-      <Button title="Start Ride" onPress={() => navigation.navigate("Ride")} />
-    </View>
+      {/* Interactive Map */}
+      <View className="mt-5 shadow-md rounded-lg overflow-hidden">
+        <MapView
+          className="w-full h-64"
+          initialRegion={{
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        >
+          {bikes.map((bike, index) => (
+            <Marker
+              key={index}
+              coordinate={{ latitude: bike.latitude, longitude: bike.longitude }}
+              title={bike.name}
+              description={bike.status}
+              pinColor="#FF7A00" // Custom pin color
+            />
+          ))}
+        </MapView>
+      </View>
+
+      {/* Stats Overview */}
+      <View className="flex-row justify-between mt-5">
+        <View className="bg-white p-4 rounded-lg w-28 items-center shadow-md">
+          <MaterialIcons name="directions-bike" size={24} color="#175E5E" />
+          <Text className="text-lg font-bold text-gray-900 mt-2">12 Rides</Text>
+          <Text className="text-sm text-gray-500 mt-1">Total Rides</Text>
+        </View>
+        <View className="bg-white p-4 rounded-lg w-28 items-center shadow-md">
+          <Ionicons name="timer-outline" size={24} color="#175E5E" />
+          <Text className="text-lg font-bold text-gray-900 mt-2">56 mins</Text>
+          <Text className="text-sm text-gray-500 mt-1">Avg. Time</Text>
+        </View>
+        <View className="bg-white p-4 rounded-lg w-28 items-center shadow-md">
+          <Ionicons name="leaf-outline" size={24} color="#175E5E" />
+          <Text className="text-lg font-bold text-gray-900 mt-2">9 Kgs</Text>
+          <Text className="text-sm text-gray-500 mt-1">CO2 Saved</Text>
+        </View>
+      </View>
+
+      {/* Start Ride Button */}
+      <TouchableOpacity
+        className="bg-[#175E5E] p-4 rounded-lg shadow-lg mt-8 mb-8"
+        onPress={() => navigation.navigate("NearBikeList", { bikes })}
+      >
+        <Text className="text-center text-white text-lg font-bold">Start Ride</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 };
 
