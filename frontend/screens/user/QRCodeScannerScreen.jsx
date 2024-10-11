@@ -14,15 +14,17 @@ const QRCodeScannerScreen = ({ navigation }) => {
     })();
   }, []);
 
+
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    // Assuming the QR code contains the bike's unlock code
+    
     Alert.alert("QR Code Scanned", `Unlock Code: ${data}`, [
       {
         text: "OK",
         onPress: () => {
           setScanned(false);
-          navigation.goBack(); // Or navigate to a different screen if needed
+         
+          navigation.navigate("UnlockCodeScreen", { unlockCode: data });
         },
       },
     ]);
@@ -36,42 +38,40 @@ const QRCodeScannerScreen = ({ navigation }) => {
   }
 
   return (
-    <View className="flex-1">
+    <View style={{ flex: 1 }}>
       {/* Sticky Header */}
-      <View className="flex-row items-center justify-between p-6 bg-[#175E5E] h-20">
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16, backgroundColor: '#175E5E', height: 80 }}>
         {/* Back Arrow */}
-        <TouchableOpacity onPress={() => navigation.goBack()} className="rounded-full p-2">
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 10 }}>
           <Ionicons name="arrow-back-outline" size={30} color="#FFF" />
         </TouchableOpacity>
 
         {/* "Your Bike" Section */}
-        <TouchableOpacity className="bg-[#DAEBF0] p-2 rounded-full flex-row items-center">
+        <TouchableOpacity style={{ backgroundColor: '#DAEBF0', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20, flexDirection: 'row', alignItems: 'center' }}>
           <Ionicons name="bicycle-outline" size={20} color="#175E5E" />
-          <Text className="text-[#175E5E] ml-2">Your Bike</Text>
+          <Text style={{ color: '#175E5E', marginLeft: 8 }}>Your Bike</Text>
         </TouchableOpacity>
 
         {/* Navigate Button */}
-        <TouchableOpacity className="bg-[#175E5E] p-2 rounded-full">
+        <TouchableOpacity style={{ backgroundColor: '#175E5E', padding: 10, borderRadius: 20 }}>
           <Ionicons name="navigate-outline" size={25} color="#FFF" />
         </TouchableOpacity>
       </View>
 
       {/* QR Code Scanner with Full Screen Below Header */}
-      <View className="flex-1 justify-center items-center relative">
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={{ flex: 1, width: "100%" }}  // Full width, camera takes the rest of the screen
+          style={{ flex: 1, width: "100%" }}  
         />
 
         {/* Scanner Frame */}
-        <View className="absolute border-4 border-white rounded-lg"
-          style={{ height: 250, width: 250 }}
-        />
+        <View style={{ borderWidth: 4, borderColor: 'white', borderRadius: 10, position: 'absolute', height: 250, width: 250 }} />
       </View>
 
       {/* Footer Section with More Height */}
-      <View className="w-full p-6 bg-[#202A43]">
-        <Text className="text-center text-white text-lg">
+      <View style={{ width: '100%', padding: 24, backgroundColor: '#202A43' }}>
+        <Text style={{ textAlign: 'center', color: 'white', fontSize: 18 }}>
           Scan the QR Code on bike
         </Text>
       </View>

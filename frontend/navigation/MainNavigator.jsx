@@ -18,6 +18,7 @@ import GenerateQRCode from "../screens/owner/GenerateQRCode";
 import MyBikesScreen from "../screens/owner/MyBikesScreen";
 import BikeDirectionsScreen from "../screens/user/BikeDirectionsScreen";
 import QRCodeScannerScreen from "../screens/user/QRCodeScannerScreen";
+import UnlockCodeScreen from "../screens/user/UnlockCodeScreen";
 
 
 
@@ -124,6 +125,11 @@ const MainNavigator = () => {
       <Stack.Screen
         name="QRCodeScannerScreen"
         component={QRCodeScannerScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="UnlockCodeScreen"
+        component={UnlockCodeScreen}
         options={{ headerShown: false }}
       />
 
