@@ -15,6 +15,7 @@ import MaintenanceScreen from "../screens/admin/MaintenanceScreen";
 import AddBicycleDetails from "../screens/owner/AddBicycleDetails";
 import AddCombinationLock from "../screens/owner/AddCombinationLock";
 import GenerateQRCode from "../screens/owner/GenerateQRCode";
+import MyBikesScreen from "../screens/owner/MyBikesScreen";
 
 
 
@@ -95,18 +96,23 @@ const MainNavigator = () => {
 <Stack.Screen 
     name="AddBicycleDetails" 
     component={AddBicycleDetails} 
-    options={{ headerShown: false }}  // Hide header
+    options={{ headerShown: false }}  
   />
   <Stack.Screen 
     name="AddCombinationLock" 
     component={AddCombinationLock} 
-    options={{ headerShown: false }}  // Hide header
+    options={{ headerShown: false }}  
   />
   <Stack.Screen 
     name="GenerateQRCode" 
     component={GenerateQRCode} 
-    options={{ headerShown: false }}  // Hide header
+    options={{ headerShown: false }}  
   />
+  <Stack.Screen
+        name="MyBikes"
+        component={MyBikesScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };
