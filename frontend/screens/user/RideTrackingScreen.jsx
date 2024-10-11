@@ -53,26 +53,43 @@ const RideTrackingScreen = ({ route, navigation }) => {
     return `${min}:${sec < 10 ? "0" : ""}${sec}`;
   };
 
-  const handleEndTrip = () => {
-    
-    navigation.navigate("EndTripScreen", {
-      rideId,
-      totalSpend: calculateTotalSpend(),
-      distance,
-      time: formatTime(timer),
-    });
-  };
+  const handleEndTrip = async () => {
+    try {
+      // Fetch the current location
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+      
+      const { latitude, longitude } = location.coords;
 
-  // Assuming this function calculates the total spend based on some logic
-  const calculateTotalSpend = () => {
-    const pricePerKm = 60; // Example fare calculation
-    return (pricePerKm * distance).toFixed(2); // Total fare for the distance
+      // Make an API request to the backend to end the ride
+      const response = await api.post(`/rides/end`, {
+        rideId,
+        endLocation: { lat: latitude, lng: longitude },
+      });
+
+      // Handle the response
+      if (response.data) {
+        console.log("Trip ended successfully:", response.data);
+        const { totalFare, distance } = response.data;
+        
+        // Navigate to EndTripScreen and pass the necessary data
+        navigation.navigate("EndTripScreen", {
+          rideId,
+          totalFare,
+          distance,
+          timeee: formatTime(timer), // Format the time and pass it
+        });
+      }
+    } catch (error) {
+      console.error("Error ending the trip:", error);
+    }
   };
 
   return (
     <View className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row items-center  p-6 bg-[#175E5E] shadow-md">
+      <View className="flex-row items-center p-6 bg-[#175E5E] shadow-md">
         <TouchableOpacity onPress={() => navigation.goBack()} className="p-2">
           <Ionicons name="arrow-back-outline" size={30} color="#FFF" />
         </TouchableOpacity>

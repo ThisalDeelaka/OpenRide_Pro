@@ -57,7 +57,7 @@ exports.endRide = async (req, res) => {
     await bike.save();
 
     // Return the total fare and distance to the user
-    res.json({ message: 'Ride ended successfully', totalFare, distance });
+    res.json({ message: 'Ride ended successfully', totalFare, distance,durationInHours });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

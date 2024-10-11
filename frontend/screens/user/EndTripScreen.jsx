@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Alert, Image } from "react-native";
+import { View, Text, TouchableOpacity, Alert, Image, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import api from "../../services/api";
 import BikeImage from "../../assets/bike.png"; // Assuming you have the bike image here
 import { SafeAreaView } from 'react-native-safe-area-context'; // Ensure it handles device notches
 
 const EndTripScreen = ({ route, navigation }) => {
-  const { rideId } = route.params;
+  const { rideId,timeee } = route.params;
   const [totalSpend, setTotalSpend] = useState(0);
   const [distance, setDistance] = useState(0);
   const [time, setTime] = useState("00:00:00");
@@ -19,7 +19,7 @@ const EndTripScreen = ({ route, navigation }) => {
         const rideData = response.data;
         setTotalSpend(rideData.totalFare);
         setDistance(rideData.distance); 
-        setTime(formatTime(rideData.duration)); 
+        setTime(formatTime(timeee)); 
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching ride data:", error);
@@ -93,7 +93,7 @@ const EndTripScreen = ({ route, navigation }) => {
             <Text className="text-center text-lg text-gray-600">Distance</Text>
           </View>
           <View className="bg-[#F8E8E8] p-4 rounded-lg w-40">
-            <Text className="text-center text-2xl font-bold">{time}</Text>
+            <Text className="text-center text-2xl font-bold">{timeee}</Text>
             <Text className="text-center text-lg text-gray-600">Time</Text>
           </View>
         </View>
