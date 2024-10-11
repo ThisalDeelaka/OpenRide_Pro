@@ -1,19 +1,25 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, Text } from "react-native";
-import api from "../../services/api";
+// Remove the api import if not using backend temporarily
+// import api from "../../services/api"; 
 
-const IncidentReportingScreen = ({ navigation, route }) => {
+const IncidentReportingScreen = ({ navigation }) => {
   const [description, setDescription] = useState("");
   const [message, setMessage] = useState("");
-  const { bikeId } = route.params; // Pass bikeId when navigating from the Ride screen
+
+  // Hardcoded bikeId
+  const bikeId = "12345"; // Replace this with your desired hardcoded ID
 
   const handleReportIncident = async () => {
     try {
-      await api.post("/incidents/report", {
-        bikeId,
-        description,
-      });
-      setMessage("Incident reported successfully");
+      // Since you're not connecting to the backend, we'll simulate a successful response
+      // In real code, you would send the request to the backend
+      // await api.post("/incidents/report", {
+      //   bikeId,
+      //   description,
+      // });
+
+      setMessage(`Incident for bike ${bikeId} reported successfully`);
       setDescription(""); // Clear input after success
     } catch (error) {
       setMessage("Error reporting incident");

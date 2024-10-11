@@ -4,10 +4,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import MapView, { Marker } from 'react-native-maps';
 import api from "../../services/api";
-
+import { useNavigation } from '@react-navigation/native'; 
 
 // Drawer menu component rendered as an overlay (sidebar)
 const DrawerMenu = ({ visible, onClose }) => {
+  const navigation = useNavigation();
   return (
     <Modal
       visible={visible}
@@ -28,17 +29,17 @@ const DrawerMenu = ({ visible, onClose }) => {
             <Text className="ml-4 text-lg text-[#175E5E]">My Wallet</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center mb-4">
+          <TouchableOpacity className="flex-row items-center mb-4" >
             <Ionicons name="time-outline" size={22} color="#175E5E" />
             <Text className="ml-4 text-lg text-[#175E5E]">History</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center mb-4">
+          <TouchableOpacity className="flex-row items-center mb-4" onPress={() => navigation.navigate("IncidentScreen")}>
             <Ionicons name="help-circle-outline" size={22} color="#175E5E" />
-            <Text className="ml-4 text-lg text-[#175E5E]">FAQ</Text>
+            <Text className="ml-4 text-lg text-[#175E5E]">Incidents</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center">
+          <TouchableOpacity className="flex-row items-center" onPress={() => navigation.navigate("SupportChat")}>
             <Ionicons name="chatbox-outline" size={22} color="#175E5E" />
             <Text className="ml-4 text-lg text-[#175E5E]">Support Chat</Text>
           </TouchableOpacity>

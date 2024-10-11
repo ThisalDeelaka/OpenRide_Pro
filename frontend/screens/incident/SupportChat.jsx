@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const SupportChatScreen = () => {
+const SupportChat = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Support Chat</Text>
+      <Text style={styles.text}>SupportChat</Text>
     </View>
   );
 };
@@ -21,4 +21,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SupportChatScreen;
+export default SupportChat;
