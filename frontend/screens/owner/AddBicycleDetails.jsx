@@ -59,29 +59,30 @@ const AddBicycleDetails = ({ navigation }) => {
       Alert.alert('Error', 'Please fill all fields.');
       return;
     }
-
+  
     const bikeLocation = selectedLocation || currentLocation;
-
+  
     // Ensure the location is valid before proceeding
     if (!bikeLocation || !bikeLocation.latitude || !bikeLocation.longitude) {
       Alert.alert('Error', 'Please select a valid location.');
       return;
     }
-
+  
     // Convert the location to { lat: ..., lng: ... } format
     const formattedLocation = {
       lat: bikeLocation.latitude,
       lng: bikeLocation.longitude,
     };
-
+  
     // Navigate to the next page with properly formatted data
     navigation.navigate('AddCombinationLock', {
-      bikeName,
+      bikeName, // Ensure the bike name is passed
       rentalPrice,
       currentLocation: formattedLocation, // Pass formatted location
       images,
     });
   };
+  
 
   const handleMapPress = (event) => {
     setSelectedLocation(event.nativeEvent.coordinate);

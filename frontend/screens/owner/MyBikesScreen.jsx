@@ -109,12 +109,22 @@ const MyBikesScreen = () => {
             elevation: 2,
           }}
         >
+          {/* Display the bike name */}
           <Text className="text-xl font-semibold">
-            Location: {item.currentLocation ? `${item.currentLocation.lat}, ${item.currentLocation.lng}` : 'Location not available'}
+            Bike Name: {item.bikeName}
+          </Text>
+
+          <Text className="text-xl font-semibold">
+            Location:{" "}
+            {item.currentLocation
+              ? `${item.currentLocation.lat}, ${item.currentLocation.lng}`
+              : "Location not available"}
           </Text>
           <Text className="text-lg">Price: ${item.rentalPrice}/hour</Text>
           <Text className="text-base">Status: {item.status}</Text>
-          <Text className="text-base">Combination Lock: {item.combinationLock}</Text>
+          <Text className="text-base">
+            Combination Lock: {item.combinationLock}
+          </Text>
         </TouchableOpacity>
       </Swipeable>
     );
@@ -132,7 +142,9 @@ const MyBikesScreen = () => {
           keyExtractor={(item) => item._id}
           renderItem={renderBike}
           ListEmptyComponent={() => (
-            <Text className="text-center text-lg">You have no bikes added.</Text>
+            <Text className="text-center text-lg">
+              You have no bikes added.
+            </Text>
           )}
         />
       )}
@@ -145,12 +157,15 @@ const MyBikesScreen = () => {
         onRequestClose={() => setEditModalVisible(false)}
       >
         {/* Background overlay */}
-        <View className="flex-1 justify-end" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+        <View
+          className="flex-1 justify-end"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
+        >
           {/* Modal content */}
           <View
             className="bg-white rounded-t-2xl shadow-lg p-6"
             style={{
-              maxHeight: '60%',
+              maxHeight: "60%",
               borderTopLeftRadius: 25,
               borderTopRightRadius: 25,
             }}
@@ -167,7 +182,9 @@ const MyBikesScreen = () => {
 
             {/* Rental Price Input */}
             <View className="mb-4">
-              <Text className="text-lg font-semibold text-gray-800 mb-2">Rental Price ($)</Text>
+              <Text className="text-lg font-semibold text-gray-800 mb-2">
+                Rental Price ($)
+              </Text>
               <TextInput
                 value={newRentalPrice}
                 onChangeText={setNewRentalPrice}
@@ -179,7 +196,9 @@ const MyBikesScreen = () => {
 
             {/* Combination Lock Input */}
             <View className="mb-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-2">Combination Lock Code</Text>
+              <Text className="text-lg font-semibold text-gray-800 mb-2">
+                Combination Lock Code
+              </Text>
               <TextInput
                 value={newCombinationLock}
                 onChangeText={setNewCombinationLock}
@@ -193,7 +212,9 @@ const MyBikesScreen = () => {
               onPress={saveBikeDetails}
               className="bg-[#175E5E] p-4 rounded-lg"
             >
-              <Text className="text-center text-white font-bold">Save Changes</Text>
+              <Text className="text-center text-white font-bold">
+                Save Changes
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

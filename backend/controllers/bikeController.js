@@ -2,7 +2,8 @@ const Bike = require("../models/Bike");
 
 // Register a new bike
 exports.registerBike = async (req, res) => {
-  const { ownerId, currentLocation, rentalPrice, combinationLock } = req.body;
+  const { ownerId, bikeName, currentLocation, rentalPrice, combinationLock } =
+    req.body;
 
   // Ensure that currentLocation contains both lat and lng
   if (!currentLocation || !currentLocation.lat || !currentLocation.lng) {
@@ -12,7 +13,8 @@ exports.registerBike = async (req, res) => {
   try {
     const newBike = new Bike({
       ownerId,
-      currentLocation, // This should be { lat: Number, lng: Number }
+      bikeName, // Include the bike name
+      currentLocation, // Make sure this is { lat: Number, lng: Number }
       rentalPrice,
       combinationLock,
     });

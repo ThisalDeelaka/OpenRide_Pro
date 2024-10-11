@@ -21,10 +21,9 @@ const GenerateQRCode = ({ route, navigation }) => {
     // Save the bike to the database and generate a unique bike ID
     const registerBike = async () => {
       try {
-        // Get ownerId from AsyncStorage
         const ownerId = await AsyncStorage.getItem("user").then(
           (user) => JSON.parse(user).id
-        );
+        ); // Get ownerId from AsyncStorage
 
         console.log("Registering bike with data: ", {
           ownerId,
@@ -37,6 +36,7 @@ const GenerateQRCode = ({ route, navigation }) => {
 
         const response = await api.post("/bikes/register", {
           ownerId,
+          bikeName, // Pass bikeName here
           currentLocation, // Pass location with lat, lng
           rentalPrice: parseFloat(rentalPrice), // Ensure rental price is a number
           combinationLock, // Pass combination lock

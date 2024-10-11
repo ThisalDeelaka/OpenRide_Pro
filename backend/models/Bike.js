@@ -6,7 +6,17 @@ const bikeSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  currentLocation: { type: { lat: Number, lng: Number }, required: true },
+  bikeName: {
+    type: String,
+    required: true, // Make this field required or optional based on your requirements
+  },
+  currentLocation: {
+    type: {
+      lat: { type: Number, required: true },
+      lng: { type: Number, required: true },
+    },
+    required: true,
+  },
   status: {
     type: String,
     enum: ["available", "maintenance"],
@@ -14,7 +24,6 @@ const bikeSchema = new mongoose.Schema({
   },
   rentalPrice: { type: Number, required: true },
   combinationLock: { type: String, required: true }, // Field for combination lock
-  adminaccepted: { type: Boolean, default: false }, // Field for admin acceptance
 });
 
 module.exports = mongoose.model("Bike", bikeSchema);
