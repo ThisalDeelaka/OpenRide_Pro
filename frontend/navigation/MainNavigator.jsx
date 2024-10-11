@@ -23,6 +23,7 @@ import StartTripScrean from "../screens/user/StartTripScreen";
 import SupportChat from "../screens/incident/SupportChat";
 import IncidentScreen from "../screens/incident/IncidentScreen";
 import AdminRequestsScreen from "../screens/admin/AdminRequestsScreen";
+import RideTrackingScreen from "../screens/user/RideTrackingScreen";
 
 
 
@@ -155,7 +156,11 @@ const MainNavigator = () => {
     component={IncidentScreen}
     options={{ headerShown: false }}
     />
-    
+    <Stack.Screen
+    name="RideTrackingScreen"
+    component={RideTrackingScreen}
+    options={{ headerShown: false }}
+    />
     {/* admin*/}
     <Stack.Screen
     name="Notifications"

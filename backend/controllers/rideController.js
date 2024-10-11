@@ -80,3 +80,20 @@ const calculateDistance = (start, end) => {
 
   return R * c; // Distance in kilometers
 };
+
+exports.getRideById = async (req, res) => {
+  try {
+    const { rideId } = req.params;
+
+    // Find the ride by its _id
+    const ride = await Ride.findById(rideId).populate('userId').populate('bikeId'); // Populating user and bike details if necessary
+
+    if (!ride) {
+      return res.status(404).json({ message: 'Ride not found.' });
+    }
+
+    return res.status(200).json(ride);
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
