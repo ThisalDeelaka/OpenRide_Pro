@@ -87,7 +87,7 @@ const BikeDirectionsScreen = ({ route, navigation }) => {
       {/* Unlock Button */}
       <View className="absolute bottom-0 w-full p-4 bg-[#DAEBF0]">
         <TouchableOpacity
-          onPress={() => {/* handle unlock functionality */}}
+          onPress={() => navigation.navigate("QRCodeScannerScreen")} // Navigate to the QR code scanner
           className="bg-[#175E5E] py-4 rounded-full shadow-lg flex-row justify-center items-center"
         >
           <Ionicons name="qr-code-outline" size={20} color="#FFF" className="mr-2" />
