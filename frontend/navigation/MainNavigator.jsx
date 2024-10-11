@@ -24,6 +24,7 @@ import SupportChat from "../screens/incident/SupportChat";
 import IncidentScreen from "../screens/incident/IncidentScreen";
 import AdminRequestsScreen from "../screens/admin/AdminRequestsScreen";
 import RideTrackingScreen from "../screens/user/RideTrackingScreen";
+import EndTripScreen from "../screens/user/EndTripScreen";
 
 
 
@@ -138,6 +139,16 @@ const MainNavigator = () => {
         component={StartTripScrean}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+    name="RideTrackingScreen"
+    component={RideTrackingScreen}
+    options={{ headerShown: false }}
+    />
+    <Stack.Screen
+    name="EndTripScreen"
+    component={EndTripScreen}
+    options={{ headerShown: false }}
+    />
 
 {/* incident Flow */}
 
@@ -156,11 +167,7 @@ const MainNavigator = () => {
     component={IncidentScreen}
     options={{ headerShown: false }}
     />
-    <Stack.Screen
-    name="RideTrackingScreen"
-    component={RideTrackingScreen}
-    options={{ headerShown: false }}
-    />
+    
     {/* admin*/}
     <Stack.Screen
     name="Notifications"

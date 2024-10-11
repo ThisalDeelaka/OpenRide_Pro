@@ -16,6 +16,10 @@ const RideTrackingScreen = ({ route, navigation }) => {
     const fetchRideDetails = async () => {
       try {
         const response = await api.get(`/rides/${rideId}`);
+        const rideData = response.data;
+        // Assuming the backend sends distance and average speed
+        setDistance(rideData.distance);
+        setAverageSpeed(rideData.averageSpeed);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching ride details:", error);
@@ -30,7 +34,7 @@ const RideTrackingScreen = ({ route, navigation }) => {
         { accuracy: Location.Accuracy.High, timeInterval: 1000 },
         (location) => {
           const { speed } = location.coords;
-          const speedKmh = speed * 3.6;
+          const speedKmh = speed * 3.6; // Convert m/s to km/h
           setCurrentSpeed(speedKmh.toFixed(1));
         }
       );
@@ -40,7 +44,7 @@ const RideTrackingScreen = ({ route, navigation }) => {
 
     const interval = setInterval(() => setTimer((prev) => prev + 1), 1000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval); // Clean up timer
   }, [rideId]);
 
   const formatTime = (seconds) => {
@@ -49,22 +53,26 @@ const RideTrackingScreen = ({ route, navigation }) => {
     return `${min}:${sec < 10 ? "0" : ""}${sec}`;
   };
 
-  const handleEndTrip = async () => {
-    try {
-      setIsLoading(true);
-      const response = await api.post("/rides/end", { rideId });
-      navigation.navigate("RideSummaryScreen", { rideId });
-    } catch (error) {
-      console.error("Error ending the ride:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleEndTrip = () => {
+    
+    navigation.navigate("EndTripScreen", {
+      rideId,
+      totalSpend: calculateTotalSpend(),
+      distance,
+      time: formatTime(timer),
+    });
+  };
+
+  // Assuming this function calculates the total spend based on some logic
+  const calculateTotalSpend = () => {
+    const pricePerKm = 60; // Example fare calculation
+    return (pricePerKm * distance).toFixed(2); // Total fare for the distance
   };
 
   return (
     <View className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row items-center p-6 bg-[#175E5E] shadow-md">
+      <View className="flex-row items-center  p-6 bg-[#175E5E] shadow-md">
         <TouchableOpacity onPress={() => navigation.goBack()} className="p-2">
           <Ionicons name="arrow-back-outline" size={30} color="#FFF" />
         </TouchableOpacity>
