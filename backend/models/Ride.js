@@ -7,8 +7,8 @@ const rideSchema = new mongoose.Schema({
   endLocation: { type: { lat: Number, lng: Number } },
   startTime: { type: Date, default: Date.now },
   endTime: { type: Date },
-  distance: { type: Number }, // Can be calculated but doesn't affect fare
-  totalFare: { type: Number } // Calculated based on time duration
+  distance: { type: Number }, // Can be calculated
+  totalFare: { type: Number }
 });
 
 module.exports = mongoose.model('Ride', rideSchema);

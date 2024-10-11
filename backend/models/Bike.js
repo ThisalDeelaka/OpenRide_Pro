@@ -19,7 +19,7 @@ const bikeSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["available", "maintenance"],
+    enum: ["available", "maintenance","in use"],
     default: "available",
   },
   rentalPrice: { type: Number, required: true },

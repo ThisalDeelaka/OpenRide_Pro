@@ -22,7 +22,7 @@ exports.startRide = async (req, res) => {
 
     res.status(201).json({ message: 'Ride started successfully', rideId: newRide._id });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message:error});
   }
 };
 
