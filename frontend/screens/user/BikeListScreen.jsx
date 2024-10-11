@@ -8,7 +8,8 @@ const BikeListScreen = ({ route, navigation }) => {
   const renderBikeItem = ({ item }) => (
     <TouchableOpacity
       className="flex-row items-center bg-white p-3 mb-3 rounded-lg shadow-md"
-      onPress={() => navigation.navigate("BikeDetails", { bikeId: item._id })} // Navigate to bike details
+      // Navigate to BikeDirectionsScreen and pass bike location
+      onPress={() => navigation.navigate("BikeDirectionsScreen", { bikeLocation: item.currentLocation })} 
     >
       {/* Bike Image from assets */}
       <Image

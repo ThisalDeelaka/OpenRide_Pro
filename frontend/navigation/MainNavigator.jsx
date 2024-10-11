@@ -16,6 +16,7 @@ import AddBicycleDetails from "../screens/owner/AddBicycleDetails";
 import AddCombinationLock from "../screens/owner/AddCombinationLock";
 import GenerateQRCode from "../screens/owner/GenerateQRCode";
 import MyBikesScreen from "../screens/owner/MyBikesScreen";
+import BikeDirectionsScreen from "../screens/user/BikeDirectionsScreen";
 
 
 
@@ -113,6 +114,13 @@ const MainNavigator = () => {
         component={MyBikesScreen}
         options={{ headerShown: false }}
       />
+      {/* rider Flow */}
+      <Stack.Screen
+        name="BikeDirectionsScreen"
+        component={BikeDirectionsScreen}
+        options={{ headerShown: false }}
+      />
+
     </Stack.Navigator>
   );
 };
