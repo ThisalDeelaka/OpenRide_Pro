@@ -9,6 +9,7 @@ const AllBikesScreen = ({ navigation }) => {
   const [bikes, setBikes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [loadingBikeId, setLoadingBikeId] = useState(null); // Track loading state for individual bikes
 
   // Function to fetch bikes from the backend
   const fetchBikes = async () => {
@@ -17,7 +18,7 @@ const AllBikesScreen = ({ navigation }) => {
       const response = await api.get('/bikes/'); // Replace with your actual backend URL
       const fetchedBikes = response.data.map(bike => ({
         ...bike,
-        isAvailable: true // Set all bikes available by default
+        isAvailable: bike.status === 'available' // Set availability based on status from backend
       }));
       setBikes(fetchedBikes); // Set the fetched bikes to state
       setError(null); // Clear any previous error
@@ -28,13 +29,31 @@ const AllBikesScreen = ({ navigation }) => {
     }
   };
 
+  // Function to update bike availability on the backend
+  const updateBikeStatus = async (bikeId, isAvailable) => {
+    setLoadingBikeId(bikeId); // Set loading state for the toggled bike
+    try {
+      await api.put('/bikes/status', {
+        bikeId,
+        status: isAvailable ? 'available' : 'maintenance',
+      });
+      setBikes(prevBikes =>
+        prevBikes.map(bike =>
+          bike._id === bikeId ? { ...bike, isAvailable } : bike
+        )
+      );
+      setError(null); // Clear error if update succeeds
+    } catch (err) {
+      setError('Failed to update bike status');
+    } finally {
+      setLoadingBikeId(null); // Reset loading state after update
+    }
+  };
+
   // Simulate toggling bike availability
-  const toggleAvailability = (bikeId) => {
-    setBikes(prevBikes =>
-      prevBikes.map(bike =>
-        bike._id === bikeId ? { ...bike, isAvailable: !bike.isAvailable } : bike
-      )
-    );
+  const toggleAvailability = (bikeId, currentStatus) => {
+    const newStatus = !currentStatus;
+    updateBikeStatus(bikeId, newStatus);
   };
 
   useEffect(() => {
@@ -77,15 +96,21 @@ const AllBikesScreen = ({ navigation }) => {
 
               {/* Toggle Button for Availability */}
               <View className="flex-row items-center">
-                <Text className={`mr-2 ${item.isAvailable ? 'text-[#182667]' : 'text-red-600'}`}>
-                  {item.isAvailable ? 'Available' : 'Unavailable'}
-                </Text>
-                <Switch
-                  value={item.isAvailable}
-                  onValueChange={() => toggleAvailability(item._id)}
-                  trackColor={{ false: '#ccc', true: '#182667' }} // Change available color to #182667
-                  thumbColor={item.isAvailable ? '#182667' : '#f4f3f4'}
-                />
+                {loadingBikeId === item._id ? (
+                  <ActivityIndicator size="small" color="#175E5E" />
+                ) : (
+                  <>
+                    <Text className={`mr-2 ${item.isAvailable ? 'text-[#182667]' : 'text-red-600'}`}>
+                      {item.isAvailable ? 'Available' : 'Unavailable'}
+                    </Text>
+                    <Switch
+                      value={item.isAvailable}
+                      onValueChange={() => toggleAvailability(item._id, item.isAvailable)}
+                      trackColor={{ false: '#ccc', true: '#182667' }} // Change available color to #182667
+                      thumbColor={item.isAvailable ? '#182667' : '#f4f3f4'}
+                    />
+                  </>
+                )}
               </View>
             </View>
           )}

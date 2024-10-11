@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Switch, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, FlatList, Switch, TouchableOpacity, TextInput, ActivityIndicator, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
@@ -19,10 +19,11 @@ const AdminMaintenanceScreen = ({ navigation }) => {
       const response = await api.get('/bikes/'); // Replace with actual API call
       const updatedBikes = response.data.map(bike => ({
         ...bike,
-        isUnderMaintenance: false // Assume bikes are not under maintenance by default
+        isUnderMaintenance: bike.status === 'maintenance' // Update the status from backend data
       }));
       setBikes(updatedBikes);
-      setFilteredBikes(updatedBikes.filter(bike => bike.runHours > maintenanceHours));
+      // Filter bikes that are unavailable (under maintenance)
+      setFilteredBikes(updatedBikes.filter(bike => bike.isUnderMaintenance));
       setError(null);
     } catch (err) {
       setError('Failed to load bikes');
@@ -31,24 +32,28 @@ const AdminMaintenanceScreen = ({ navigation }) => {
     }
   };
 
-  // Filter bikes based on runtime hours
-  const filterBikes = () => {
-    const filtered = bikes.filter(bike => bike.runHours > maintenanceHours);
-    setFilteredBikes(filtered);
-  };
-
   // Toggle maintenance status of a bike
-  const toggleMaintenance = (bikeId) => {
-    setBikes(prevBikes =>
-      prevBikes.map(bike =>
-        bike._id === bikeId ? { ...bike, isUnderMaintenance: !bike.isUnderMaintenance } : bike
-      )
-    );
-    setFilteredBikes(prevBikes =>
-      prevBikes.map(bike =>
-        bike._id === bikeId ? { ...bike, isUnderMaintenance: !bike.isUnderMaintenance } : bike
-      )
-    );
+  const toggleMaintenance = async (bikeId, currentStatus) => {
+    try {
+      const newStatus = !currentStatus ? 'maintenance' : 'available';
+      await api.put('/bikes/update-status', { bikeId, status: newStatus });
+      
+      // Update the local state with the new status
+      setBikes(prevBikes =>
+        prevBikes.map(bike =>
+          bike._id === bikeId ? { ...bike, isUnderMaintenance: !currentStatus } : bike
+        )
+      );
+      
+      // Update the filtered list to only show bikes that are under maintenance
+      setFilteredBikes(prevBikes =>
+        prevBikes.map(bike =>
+          bike._id === bikeId ? { ...bike, isUnderMaintenance: !currentStatus } : bike
+        ).filter(bike => bike.isUnderMaintenance) // Only show under maintenance bikes
+      );
+    } catch (err) {
+      Alert.alert('Error', 'Failed to update bike status');
+    }
   };
 
   useEffect(() => {
@@ -65,24 +70,12 @@ const AdminMaintenanceScreen = ({ navigation }) => {
         <Text className="text-3xl font-bold ml-4 text-teal-800">Maintenance</Text>
       </View>
 
-      {/* Input for Maintenance Hours Threshold */}
-      <View className="flex-row items-center mb-4">
-        <Text className="text-lg mr-4 text-teal-800">Maintenance After (hours):</Text>
-        <TextInput
-          value={String(maintenanceHours)}
-          onChangeText={(value) => setMaintenanceHours(parseInt(value))}
-          keyboardType="numeric"
-          className="border p-2 w-20 text-center"
-        />
-        <TouchableOpacity className="bg-[#175E5E] p-2 rounded-lg ml-4" onPress={filterBikes}>
-          <Text className="text-white text-lg">Filter</Text>
-        </TouchableOpacity>
-      </View>
-
       {loading ? (
         <ActivityIndicator size="large" color="#175E5E" />
       ) : error ? (
         <Text className="text-red-500 text-lg mb-4">{error}</Text>
+      ) : filteredBikes.length === 0 ? (
+        <Text className="text-lg text-teal-800">No bikes under maintenance</Text>
       ) : (
         <FlatList
           data={filteredBikes}
@@ -110,7 +103,7 @@ const AdminMaintenanceScreen = ({ navigation }) => {
                 </Text>
                 <Switch
                   value={item.isUnderMaintenance}
-                  onValueChange={() => toggleMaintenance(item._id)}
+                  onValueChange={() => toggleMaintenance(item._id, item.isUnderMaintenance)}
                   trackColor={{ false: '#ccc', true: '#FF6B6B' }} // Red color for under maintenance
                   thumbColor={item.isUnderMaintenance ? '#FF6B6B' : '#f4f3f4'}
                 />
