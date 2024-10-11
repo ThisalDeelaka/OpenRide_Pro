@@ -8,21 +8,26 @@ import {
   Alert,
   ActivityIndicator,
   Modal,
+  Image, // Import Image here
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView, Platform,
 } from "react-native";
-import { Swipeable } from "react-native-gesture-handler"; // For swipeable list items
+import { Swipeable } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
-import api from "../../services/api"; // Assuming you have an api service setup
+import api from "../../services/api"; 
+import bikeImg from "../../assets/bike.png"; // Assuming you have this image in the assets folder
 
-const MyBikesScreen = () => {
+const MyBikesScreen = ({ navigation }) => {
   const [bikes, setBikes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingBikeId, setEditingBikeId] = useState(null); // For tracking the bike being edited
+  const [editingBikeId, setEditingBikeId] = useState(null);
   const [newRentalPrice, setNewRentalPrice] = useState("");
   const [newCombinationLock, setNewCombinationLock] = useState("");
-  const [isEditModalVisible, setEditModalVisible] = useState(false); // For modal visibility
+  const [isEditModalVisible, setEditModalVisible] = useState(false); 
 
-  // Fetch bikes from backend
   const fetchBikes = async () => {
     try {
       const storedUser = await AsyncStorage.getItem("user");
@@ -39,21 +44,19 @@ const MyBikesScreen = () => {
   };
 
   useEffect(() => {
-    fetchBikes(); // Fetch bikes when the component mounts
+    fetchBikes(); 
   }, []);
 
-  // Delete a bike
   const deleteBike = async (bikeId) => {
     try {
       await api.delete(`/bikes/${bikeId}`);
       Alert.alert("Success", "Bike deleted successfully");
-      fetchBikes(); // Refresh the bike list after deletion
+      fetchBikes(); 
     } catch (error) {
       Alert.alert("Error", "Failed to delete the bike.");
     }
   };
 
-  // Save the edited bike details
   const saveBikeDetails = async () => {
     try {
       const updatedData = {
@@ -62,163 +65,144 @@ const MyBikesScreen = () => {
       };
       await api.put(`/bikes/${editingBikeId}`, updatedData);
       Alert.alert("Success", "Bike details updated successfully");
-      setEditModalVisible(false); // Close the modal
-      fetchBikes(); // Refresh the bike list after update
+      setEditModalVisible(false); 
+      fetchBikes(); 
     } catch (error) {
       Alert.alert("Error", "Failed to update bike details.");
     }
   };
 
-  // Open the edit modal with pre-filled values
   const openEditModal = (item) => {
     setEditingBikeId(item._id);
     setNewRentalPrice(item.rentalPrice.toString());
     setNewCombinationLock(item.combinationLock);
-    setEditModalVisible(true); // Show the modal
+    setEditModalVisible(true); 
   };
 
-  // Render the delete button when swiped left
   const renderRightActions = (bikeId) => (
     <TouchableOpacity
       onPress={() => deleteBike(bikeId)}
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-        width: 80,
-        height: "100%",
-        backgroundColor: "#FF6B6B",
-        borderRadius: 10,
-        marginVertical: 5,
-      }}
+      className="bg-red-500 justify-center p-4 rounded-lg"
     >
       <Text className="text-white font-bold">Delete</Text>
     </TouchableOpacity>
   );
 
-  // Render a single bike
   const renderBike = ({ item }) => {
     return (
       <Swipeable renderRightActions={() => renderRightActions(item._id)}>
         <TouchableOpacity
-          onLongPress={() => openEditModal(item)} // Long press to open the edit modal
-          style={{
-            backgroundColor: "white",
-            padding: 16,
-            marginBottom: 10,
-            borderRadius: 10,
-            elevation: 2,
-          }}
+          onLongPress={() => openEditModal(item)}
+          className="p-4 bg-white mb-4 shadow-lg rounded-lg flex-row items-center"
         >
-          {/* Display the bike name */}
-          <Text className="text-xl font-semibold">
-            Bike Name: {item.bikeName}
-          </Text>
-
-          <Text className="text-xl font-semibold">
-            Location:{" "}
-            {item.currentLocation
-              ? `${item.currentLocation.lat}, ${item.currentLocation.lng}`
-              : "Location not available"}
-          </Text>
-          <Text className="text-lg">Price: ${item.rentalPrice}/hour</Text>
-          <Text className="text-base">Status: {item.status}</Text>
-          <Text className="text-base">
-            Combination Lock: {item.combinationLock}
-          </Text>
+          <Image source={bikeImg} className="w-16 h-16 rounded-lg mr-4" />
+          <View className="flex-1">
+            <Text className="text-xl font-semibold text-[#175E5E]">
+              {item.name || `Bike ${item._id}`}
+            </Text>
+            <Text className="text-gray-600">Price: ${item.rentalPrice}/hour</Text>
+            <Text className="text-gray-600">Lock: {item.combinationLock}</Text>
+          </View>
         </TouchableOpacity>
       </Swipeable>
     );
   };
 
   return (
-    <View className="flex-1 p-4 bg-[#F3F4F6]">
-      <Text className="text-2xl font-bold text-center mb-4">My Bikes</Text>
+    <View className="flex-1 bg-[#F3F4F6]">
+      <View className="flex-row items-center bg-[#175E5E] p-4 shadow-md">
+        <TouchableOpacity onPress={() => navigation.goBack()} className="mr-4">
+          <Ionicons name="arrow-back" size={24} color="#FFF" />
+        </TouchableOpacity>
+        <Text className="text-2xl font-bold text-white">My Bikes</Text>
+      </View>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#175E5E" />
+        <ActivityIndicator size="large" color="#175E5E" className="mt-8" />
       ) : (
         <FlatList
           data={bikes}
           keyExtractor={(item) => item._id}
           renderItem={renderBike}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
           ListEmptyComponent={() => (
-            <Text className="text-center text-lg">
-              You have no bikes added.
-            </Text>
+            <Text className="text-center text-lg">You have no bikes added.</Text>
           )}
         />
       )}
 
       {/* Edit Modal */}
       <Modal
-        visible={isEditModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setEditModalVisible(false)}
+  visible={isEditModalVisible}
+  animationType="slide"
+  transparent={true}
+  onRequestClose={() => setEditModalVisible(false)}
+>
+  {/* Background overlay */}
+  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <View className="flex-1 justify-end" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+      {/* Keyboard Avoiding View */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1, justifyContent: 'flex-end' }}
       >
-        {/* Background overlay */}
+        {/* Modal content */}
         <View
-          className="flex-1 justify-end"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
+          className="bg-white rounded-t-2xl shadow-lg p-6"
+          style={{
+            maxHeight: '60%', // Adjust modal height
+            borderTopLeftRadius: 25,
+            borderTopRightRadius: 25,
+          }}
         >
-          {/* Modal content */}
-          <View
-            className="bg-white rounded-t-2xl shadow-lg p-6"
-            style={{
-              maxHeight: "60%",
-              borderTopLeftRadius: 25,
-              borderTopRightRadius: 25,
-            }}
+          {/* Close Icon */}
+          <TouchableOpacity
+            onPress={() => setEditModalVisible(false)}
+            className="absolute top-4 right-4"
           >
-            {/* Close Icon */}
-            <TouchableOpacity
-              onPress={() => setEditModalVisible(false)}
-              className="absolute top-4 right-4"
-            >
-              <Ionicons name="close" size={30} color="gray" />
-            </TouchableOpacity>
+            <Ionicons name="close" size={30} color="gray" />
+          </TouchableOpacity>
 
-            <Text className="text-2xl font-bold mb-4">Edit Bike Details</Text>
+          <Text className="text-2xl font-bold mb-4">Edit Bike Details</Text>
 
-            {/* Rental Price Input */}
-            <View className="mb-4">
-              <Text className="text-lg font-semibold text-gray-800 mb-2">
-                Rental Price ($)
-              </Text>
-              <TextInput
-                value={newRentalPrice}
-                onChangeText={setNewRentalPrice}
-                placeholder="Enter new rental price"
-                keyboardType="numeric"
-                className="bg-gray-200 p-4 rounded-lg"
-              />
-            </View>
-
-            {/* Combination Lock Input */}
-            <View className="mb-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-2">
-                Combination Lock Code
-              </Text>
-              <TextInput
-                value={newCombinationLock}
-                onChangeText={setNewCombinationLock}
-                placeholder="Enter new combination lock"
-                className="bg-gray-200 p-4 rounded-lg"
-              />
-            </View>
-
-            {/* Save Button */}
-            <TouchableOpacity
-              onPress={saveBikeDetails}
-              className="bg-[#175E5E] p-4 rounded-lg"
-            >
-              <Text className="text-center text-white font-bold">
-                Save Changes
-              </Text>
-            </TouchableOpacity>
+          {/* Rental Price Input */}
+          <View className="mb-4">
+            <Text className="text-lg font-semibold text-gray-800 mb-2">Rental Price ($)</Text>
+            <TextInput
+              value={newRentalPrice}
+              onChangeText={setNewRentalPrice}
+              placeholder="Enter new rental price"
+              keyboardType="numeric"
+              className="bg-gray-200 p-4 rounded-lg"
+            />
           </View>
+
+          {/* Combination Lock Input */}
+          <View className="mb-6">
+            <Text className="text-lg font-semibold text-gray-800 mb-2">Combination Lock Code</Text>
+            <TextInput
+              value={newCombinationLock}
+              onChangeText={setNewCombinationLock}
+              placeholder="Enter new combination lock"
+              className="bg-gray-200 p-4 rounded-lg"
+            />
+          </View>
+
+          {/* Save Button */}
+          <TouchableOpacity
+            onPress={saveBikeDetails}
+            className="bg-[#175E5E] py-4 rounded-lg"
+            style={{ backgroundColor: '#175E5E' }}
+          >
+            <Text className="text-center text-white font-bold">Save Changes</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
+      </KeyboardAvoidingView>
+    </View>
+  </TouchableWithoutFeedback>
+</Modal>
+
+
     </View>
   );
 };
