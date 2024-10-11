@@ -25,12 +25,26 @@ const BikeDirectionsScreen = ({ route, navigation }) => {
         longitude: location.coords.longitude,
       };
 
+      console.log('User Location:', userLocation);
+      console.log('Bike Location:', bikeLocation);
+
+      // Ensure bikeLocation has valid coordinates
+      if (!bikeLocation || !bikeLocation.lat || !bikeLocation.lng) {
+        Alert.alert('Invalid Bike Location', 'Bike location coordinates are missing.');
+        return;
+      }
+
+      const mappedBikeLocation = {
+        latitude: bikeLocation.lat,
+        longitude: bikeLocation.lng,
+      };
+
       setCurrentLocation(userLocation);
 
       // Generate a simple straight-line polyline between user and bike
       const coordinates = [
         { latitude: userLocation.latitude, longitude: userLocation.longitude },
-        { latitude: bikeLocation.latitude, longitude: bikeLocation.longitude },
+        { latitude: mappedBikeLocation.latitude, longitude: mappedBikeLocation.longitude },
       ];
 
       setRouteCoordinates(coordinates);
@@ -64,24 +78,36 @@ const BikeDirectionsScreen = ({ route, navigation }) => {
       <MapView
         style={{ flex: 1 }}
         initialRegion={{
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
+          latitude: currentLocation.latitude || 0, // Provide fallback value
+          longitude: currentLocation.longitude || 0,
           latitudeDelta: 0.02,
           longitudeDelta: 0.02,
         }}
       >
         {/* User Marker */}
-        <Marker coordinate={currentLocation} title="Your Location" />
+        {currentLocation && (
+          <Marker coordinate={currentLocation} title="Your Location" />
+        )}
 
         {/* Bike Marker */}
-        <Marker coordinate={bikeLocation} title="Bike Location" />
+        {bikeLocation && bikeLocation.lat && bikeLocation.lng && (
+          <Marker
+            coordinate={{
+              latitude: bikeLocation.lat,
+              longitude: bikeLocation.lng,
+            }}
+            title="Bike Location"
+          />
+        )}
 
         {/* Straight Line Polyline */}
-        <Polyline
-          coordinates={routeCoordinates}
-          strokeColor="#175E5E" // Route color
-          strokeWidth={4}
-        />
+        {routeCoordinates.length > 0 && (
+          <Polyline
+            coordinates={routeCoordinates}
+            strokeColor="#175E5E" // Route color
+            strokeWidth={4}
+          />
+        )}
       </MapView>
 
       {/* Unlock Button */}
