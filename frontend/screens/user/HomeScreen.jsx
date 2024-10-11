@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Modal } from "react-native"; // Add Modal here
+import React, { useEffect, useState } from "react"; 
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Modal, Image } from "react-native"; 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import MapView, { Marker } from 'react-native-maps';
 import api from "../../services/api";
 import { useNavigation } from '@react-navigation/native'; 
+import * as Location from "expo-location"; // Import Location from expo
 
 // Drawer menu component rendered as an overlay (sidebar)
 const DrawerMenu = ({ visible, onClose }) => {
@@ -29,7 +30,7 @@ const DrawerMenu = ({ visible, onClose }) => {
             <Text className="ml-4 text-lg text-[#175E5E]">My Wallet</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center mb-4" >
+          <TouchableOpacity className="flex-row items-center mb-4">
             <Ionicons name="time-outline" size={22} color="#175E5E" />
             <Text className="ml-4 text-lg text-[#175E5E]">History</Text>
           </TouchableOpacity>
@@ -54,14 +55,15 @@ const DrawerMenu = ({ visible, onClose }) => {
 
 const HomeScreen = ({ navigation }) => {
   const [bikes, setBikes] = useState([]);
-  const [isDrawerVisible, setDrawerVisible] = useState(false); // Manage drawer visibility
-  const [loading, setLoading] = useState(true); // Loading state
+  const [isDrawerVisible, setDrawerVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [initialRegion, setInitialRegion] = useState(null); // State for user's current location
 
   // Fetch the list of bikes from the server
   useEffect(() => {
     const fetchBikes = async () => {
       try {
-        setLoading(true); // Set loading to true when fetching starts
+        setLoading(true);
         const response = await api.get("/bikes");
         if (response.data && Array.isArray(response.data)) {
           setBikes(response.data);
@@ -72,69 +74,86 @@ const HomeScreen = ({ navigation }) => {
         console.error("Error fetching bikes:", error);
         Alert.alert("Error", "Failed to load bikes");
       } finally {
-        setLoading(false); // Stop loading when fetching ends
+        setLoading(false);
       }
     };
 
+    // Get user's current location using Expo Location API
+    const getCurrentLocation = async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission denied", "Allow location access to use this feature.");
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+
+      setInitialRegion({
+        latitude,
+        longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    };
+
     fetchBikes();
+    getCurrentLocation();
   }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50 px-5">
-      {/* Drawer Menu Overlay */}
       <DrawerMenu visible={isDrawerVisible} onClose={() => setDrawerVisible(false)} />
 
-      {/* Header Section */}
-      <View className="flex-row justify-between items-center mt-5">
-        {/* Hamburger Menu Icon on the left */}
-        <TouchableOpacity onPress={() => setDrawerVisible(true)}>
-          <Ionicons name="menu-outline" size={30} color="#175E5E" />
+      <View className="flex-row items-center justify-between mt-5">
+        <TouchableOpacity onPress={() => setDrawerVisible(true)} style={{ marginRight: 10 }}>
+          <Ionicons name="menu-outline" size={32} color="#175E5E" />
         </TouchableOpacity>
 
-        <View>
-          <Text className="text-3xl font-bold text-teal-800">Hello, Matheesha</Text>
-          <Text className="text-lg text-gray-500 mt-1">Your nearest bike is waiting!</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Image
+            source={require('../../assets/profile.png')}
+            style={{ width: 60, height: 60, borderRadius: 30, marginRight: 15 }}
+          />
+          <View>
+            <Text className="text-2xl font-bold text-teal-800">Hello, Matheesha</Text>
+            <Text className="text-md text-gray-500 mt-1">Your nearest bike is waiting!</Text>
+          </View>
         </View>
       </View>
 
-      {/* Interactive Map */}
       <View className="mt-5 shadow-md rounded-lg overflow-hidden">
         {loading ? (
-          // Show loading indicator while data is being fetched
           <View className="w-full h-64 justify-center items-center">
             <ActivityIndicator size="large" color="#175E5E" />
           </View>
         ) : (
-          <MapView
-            className="w-full h-64"
-            initialRegion={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-          >
-            {bikes.length > 0 ? (
-              bikes.map((bike, index) => (
-                <Marker
-                  key={index}
-                  coordinate={{
-                    latitude: bike.currentLocation.lat || 37.78825,
-                    longitude: bike.currentLocation.lng || -122.4324,
-                  }}
-                  title={bike.bikeName || "Unnamed Bike"}
-                  description={bike.status || "Status unknown"}
-                  pinColor="#FF7A00"
-                />
-              ))
-            ) : (
-              <Text className="text-center text-gray-500 mt-5">No bikes available</Text>
-            )}
-          </MapView>
+          initialRegion && ( // Only render MapView when initialRegion is available
+            <MapView
+              className="w-full h-64"
+              initialRegion={initialRegion}
+            >
+              {bikes.length > 0 ? (
+                bikes.map((bike, index) => (
+                  <Marker
+                    key={index}
+                    coordinate={{
+                      latitude: bike.currentLocation.lat || initialRegion.latitude,
+                      longitude: bike.currentLocation.lng || initialRegion.longitude,
+                    }}
+                    title={bike.bikeName || "Unnamed Bike"}
+                    description={bike.status || "Status unknown"}
+                    pinColor="#FF7A00"
+                  />
+                ))
+              ) : (
+                <Text className="text-center text-gray-500 mt-5">No bikes available</Text>
+              )}
+            </MapView>
+          )
         )}
       </View>
 
-      {/* Stats Overview */}
       <View className="flex-row justify-between mt-5">
         <View className="bg-white p-4 rounded-lg w-28 items-center shadow-md">
           <MaterialIcons name="directions-bike" size={24} color="#175E5E" />
@@ -153,7 +172,6 @@ const HomeScreen = ({ navigation }) => {
         </View>
       </View>
 
-      {/* Start Ride Button */}
       <TouchableOpacity
         className="bg-[#175E5E] p-4 rounded-lg shadow-lg mt-8 mb-8"
         onPress={() => navigation.navigate("NearBikeList", { bikes })}
