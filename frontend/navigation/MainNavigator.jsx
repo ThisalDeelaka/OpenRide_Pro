@@ -17,6 +17,13 @@ import AddCombinationLock from "../screens/owner/AddCombinationLock";
 import GenerateQRCode from "../screens/owner/GenerateQRCode";
 import MyBikesScreen from "../screens/owner/MyBikesScreen";
 
+import HomeScreen from "../screens/user/HomeScreen";
+import SupportChatScreen from "../screens/incident/SupportChatScreen";
+import HistoryScreen from "../screens/user/HistoryScreen";
+import FAQScreens from "../screens/user/FAQScreen";
+import MyWalletScreen from "../screens/user/MyWalletScreen";
+
+
 
 
 const Stack = createStackNavigator();
@@ -113,7 +120,34 @@ const MainNavigator = () => {
         component={MyBikesScreen}
         options={{ headerShown: false }}
       />
-    </Stack.Navigator>
+  {/* Navigator components for homepage hamburger menue */}
+  <Stack.Screen
+    name="Home"
+    component={HomeScreen}
+    options={{ headerShown: false }}
+  />
+
+  <Stack.Screen
+    name="MyWallet"
+    component={MyWalletScreen}
+    options={{ headerShown: false }}
+  />
+  <Stack.Screen
+    name="History"
+    component={HistoryScreen}
+    options={{ headerShown: false }}
+  />
+  <Stack.Screen 
+    name="FAQ" 
+    component={FAQScreens} 
+    options={{ headerShown: false }}
+  />
+  <Stack.Screen
+    name="SupportChat"
+    component={SupportChatScreen}
+    options={{ headerShown: false }}
+    />
+  </Stack.Navigator>
   );
 };
 

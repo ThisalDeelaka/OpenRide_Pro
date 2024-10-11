@@ -23,17 +23,17 @@ const DrawerMenu = ({ visible, onClose,navigation }) => {
           </TouchableOpacity>
           <Text className="text-2xl font-bold text-[#175E5E] mb-5">Menu</Text>
 
-          <TouchableOpacity className="flex-row items-center mb-4">
+          <TouchableOpacity className="flex-row items-center mb-4" onPress={() => navigation.navigate("MyWallet")}>
             <Ionicons name="wallet-outline" size={22} color="#175E5E" />
             <Text className="ml-4 text-lg text-[#175E5E]">My Wallet</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center mb-4">
+          <TouchableOpacity className="flex-row items-center mb-4" onPress={() => navigation.navigate("History")}>
             <Ionicons name="time-outline" size={22} color="#175E5E" />
             <Text className="ml-4 text-lg text-[#175E5E]">History</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center mb-4">
+          <TouchableOpacity className="flex-row items-center mb-4" onPress={() => navigation.navigate("FAQ")}>
             <Ionicons name="help-circle-outline" size={22} color="#175E5E" />
             <Text className="ml-4 text-lg text-[#175E5E]">FAQ</Text>
           </TouchableOpacity>
@@ -81,7 +81,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView className="flex-1 bg-gray-50 px-5">
       {/* Drawer Menu Overlay */}
-      <DrawerMenu visible={isDrawerVisible} onClose={() => setDrawerVisible(false)} />
+      <DrawerMenu visible={isDrawerVisible} onClose={() => setDrawerVisible(false)} navigation={navigation} />
 
       {/* Header Section */}
       <View className="flex-row justify-between items-center mt-5">
