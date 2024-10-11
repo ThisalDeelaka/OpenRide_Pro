@@ -7,7 +7,7 @@ import api from "../../services/api";
 
 
 // Drawer menu component rendered as an overlay (sidebar)
-const DrawerMenu = ({ visible, onClose }) => {
+const DrawerMenu = ({ visible, onClose,navigation }) => {
   return (
     <Modal
       visible={visible}
@@ -38,7 +38,7 @@ const DrawerMenu = ({ visible, onClose }) => {
             <Text className="ml-4 text-lg text-[#175E5E]">FAQ</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center">
+          <TouchableOpacity className="flex-row items-center" onPress={() => navigation.navigate("SupportChat")}>
             <Ionicons name="chatbox-outline" size={22} color="#175E5E" />
             <Text className="ml-4 text-lg text-[#175E5E]">Support Chat</Text>
           </TouchableOpacity>

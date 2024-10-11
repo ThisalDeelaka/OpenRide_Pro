@@ -1,11 +1,49 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableWithoutFeedback, Keyboard, TextInput, TouchableOpacity } from 'react-native';
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
-const SupportChatScreen = () => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Support Chat</Text>
+function MassageInput() {
+  return(
+    <View 
+     style={
+      { paddingHorizontal:10,
+        paddingBottom:10,
+        backgroundColor:'white',
+        flexDirection:'row',
+        alignItems:'center'
+      }}>
+    <TextInput placeholder='Massage...' placeholderTextColor='#909090'
+    style={
+      {
+        flex:1,
+        paddingHorizontal:10,
+        boarderWidth:1,
+        boarderColor:'#d0d0d0d0',
+        backgroundColor:'white',
+        height:50
+      }
+    }/>
+
+    <TouchableOpacity>
+      <Ionicons name="close" size={30} color="#175E5E" style={{marginHorizontal:12}} />
+    </TouchableOpacity>
+
+
     </View>
+  )
+}
+
+const SupportChatScreen = ({userData}) => {
+  return (
+    <SafeAreaView>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View>
+
+          <MassageInput />
+
+        </View>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 };
 
