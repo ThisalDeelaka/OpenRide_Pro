@@ -20,6 +20,9 @@ import BikeDirectionsScreen from "../screens/user/BikeDirectionsScreen";
 import QRCodeScannerScreen from "../screens/user/QRCodeScannerScreen";
 import UnlockCodeScreen from "../screens/user/UnlockCodeScreen";
 import StartTripScrean from "../screens/user/StartTripScreen";
+import SupportChat from "../screens/incident/SupportChat";
+import IncidentScreen from "../screens/incident/IncidentScreen";
+
 
 
 const Stack = createStackNavigator();
@@ -67,11 +70,7 @@ const MainNavigator = () => {
         component={AdminDashboardScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="MaintenanceReports"
-        component={MaintenanceReportsScreen}
-        options={{ headerShown: false }}
-      />
+     
       
       <Stack.Screen
         name="NearBikeList"
@@ -138,7 +137,26 @@ const MainNavigator = () => {
         options={{ headerShown: false }}
       />
 
+{/* incident Flow */}
+
+<Stack.Screen
+    name="SupportChat"
+    component={SupportChat}
+    options={{ headerShown: false }}
+    />
+<Stack.Screen
+    name="MaintenanceReport"
+    component={MaintenanceReportsScreen}
+    options={{ headerShown: false }}
+    />
+    <Stack.Screen
+    name="IncidentScreen"
+    component={IncidentScreen}
+    options={{ headerShown: false }}
+    />
+    
     </Stack.Navigator>
+    
   );
 };
 
