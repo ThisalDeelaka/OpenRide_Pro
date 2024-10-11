@@ -8,7 +8,7 @@ const BikeListScreen = ({ route, navigation }) => {
   const renderBikeItem = ({ item }) => (
     <TouchableOpacity
       className="flex-row items-center bg-white p-3 mb-3 rounded-lg shadow-md"
-      onPress={() => navigation.navigate("BikeDetails", { bikeId: item._id })}
+      onPress={() => navigation.navigate("BikeDetails", { bikeId: item._id })} // Navigate to bike details
     >
       {/* Bike Image from assets */}
       <Image
@@ -28,18 +28,21 @@ const BikeListScreen = ({ route, navigation }) => {
           <View className="flex-row items-center">
             <Text
               className={`mr-2 text-sm font-medium ${
-                item.isAvailable ? "text-green-500" : "text-red-500"
+                item.status === "available" ? "text-green-500" : "text-red-500"
               }`}
             >
-              {item.isAvailable ? "Available" : "Unavailable"}
+              {item.status === "available" ? "Available" : "Unavailable"}
             </Text>
           </View>
 
-          {/* Distance */}
+          {/* Distance Placeholder */}
           <View className="flex-row items-center bg-gray-200 px-2 py-1 rounded-full">
-            <Text className="text-gray-700 text-sm">{item.distance} km</Text>
+            <Text className="text-gray-700 text-sm">Distance: {item.distance || 0} km</Text>
           </View>
         </View>
+
+        {/* Location */}
+        <Text className="text-sm text-gray-600">Location: {item.currentLocation.lat}, {item.currentLocation.lng}</Text>
       </View>
     </TouchableOpacity>
   );

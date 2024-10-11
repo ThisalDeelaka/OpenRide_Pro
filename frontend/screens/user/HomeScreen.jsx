@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Alert, Modal } from "react-native";
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Modal } from "react-native"; // Add Modal here
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import api from "../../services/api";
 import MapView, { Marker } from 'react-native-maps';
+import api from "../../services/api";
+
 
 // Drawer menu component rendered as an overlay (sidebar)
 const DrawerMenu = ({ visible, onClose,navigation }) => {
@@ -53,11 +54,13 @@ const DrawerMenu = ({ visible, onClose,navigation }) => {
 const HomeScreen = ({ navigation }) => {
   const [bikes, setBikes] = useState([]);
   const [isDrawerVisible, setDrawerVisible] = useState(false); // Manage drawer visibility
+  const [loading, setLoading] = useState(true); // Loading state
 
   // Fetch the list of bikes from the server
   useEffect(() => {
     const fetchBikes = async () => {
       try {
+        setLoading(true); // Set loading to true when fetching starts
         const response = await api.get("/bikes");
         if (response.data && Array.isArray(response.data)) {
           setBikes(response.data);
@@ -67,6 +70,8 @@ const HomeScreen = ({ navigation }) => {
       } catch (error) {
         console.error("Error fetching bikes:", error);
         Alert.alert("Error", "Failed to load bikes");
+      } finally {
+        setLoading(false); // Stop loading when fetching ends
       }
     };
 
@@ -93,32 +98,39 @@ const HomeScreen = ({ navigation }) => {
 
       {/* Interactive Map */}
       <View className="mt-5 shadow-md rounded-lg overflow-hidden">
-        <MapView
-          className="w-full h-64"
-          initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        >
-          {/*{bikes.length > 0 ? (
-            bikes.map((bike, index) => (
-              <Marker
-                key={index}
-                coordinate={{
-                  latitude: bike.latitude || 37.78825,
-                  longitude: bike.longitude || -122.4324,
-                }}
-                title={bike.name || "Unnamed Bike"}
-                description={bike.status || "Status unknown"}
-                pinColor="#FF7A00"
-              />
-            ))
-          ) : (
-            <Text className="text-center text-gray-500 mt-5">No bikes available</Text>
-          )}*/}
-        </MapView>
+        {loading ? (
+          // Show loading indicator while data is being fetched
+          <View className="w-full h-64 justify-center items-center">
+            <ActivityIndicator size="large" color="#175E5E" />
+          </View>
+        ) : (
+          <MapView
+            className="w-full h-64"
+            initialRegion={{
+              latitude: 37.78825,
+              longitude: -122.4324,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          >
+            {bikes.length > 0 ? (
+              bikes.map((bike, index) => (
+                <Marker
+                  key={index}
+                  coordinate={{
+                    latitude: bike.currentLocation.lat || 37.78825,
+                    longitude: bike.currentLocation.lng || -122.4324,
+                  }}
+                  title={bike.name || "Unnamed Bike"}
+                  description={bike.status || "Status unknown"}
+                  pinColor="#FF7A00"
+                />
+              ))
+            ) : (
+              <Text className="text-center text-gray-500 mt-5">No bikes available</Text>
+            )}
+          </MapView>
+        )}
       </View>
 
       {/* Stats Overview */}

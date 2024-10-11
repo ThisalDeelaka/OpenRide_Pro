@@ -7,12 +7,15 @@ import AdminDashboardScreen from "../screens/admin/AdminDashboardScreen";
 import MaintenanceReportsScreen from "../screens/incident/MaintenanceReportsScreen";
 import AdminBottomTabNavigator from "./AdminBottomTabNavigator";
 import OwnerBottomTabNavigator from "./BikeOwnerTabNavigator";
-import OnboardingScreen from "../screens/onboarding/OnboardingScreen"; // Import OnboardingScreen
-import SupportChatScreen from "../screens/incident/SupportChatScreen"; // Import SupportChatScreen
-
+import OnboardingScreen from "../screens/onboarding/OnboardingScreen";
+import AllBikesScreen from "../screens/admin/AllBikesScreen"; // Import AllBikesScreen
 import AddBicycle from "../screens/owner/AddBicycle"; // Import AddBicycle
-
 import BikeListScreen from "../screens/user/BikeListScreen";
+import MaintenanceScreen from "../screens/admin/MaintenanceScreen";
+import AddBicycleDetails from "../screens/owner/AddBicycleDetails";
+import AddCombinationLock from "../screens/owner/AddCombinationLock";
+import GenerateQRCode from "../screens/owner/GenerateQRCode";
+import MyBikesScreen from "../screens/owner/MyBikesScreen";
 
 
 
@@ -66,22 +69,50 @@ const MainNavigator = () => {
         component={MaintenanceReportsScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="AddBicycle"
-        component={AddBicycle}
-        options={{ headerShown: false }}
-      />
+      
       <Stack.Screen
         name="NearBikeList"
         component={BikeListScreen}
         options={{ headerShown: false }}
       />
+      <Stack.Screen 
+        name="AllBikes" 
+        component={AllBikesScreen} 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="AdminMaintain" 
+        component={MaintenanceScreen} 
+        options={{ headerShown: false }} 
+      />
+
+      {/* bike owner*/}
       <Stack.Screen
-        name="SupportChat"
-        component={SupportChatScreen}
+        name="AddBicycle"
+        component={AddBicycle}
         options={{ headerShown: false }}
       />
-      
+
+<Stack.Screen 
+    name="AddBicycleDetails" 
+    component={AddBicycleDetails} 
+    options={{ headerShown: false }}  
+  />
+  <Stack.Screen 
+    name="AddCombinationLock" 
+    component={AddCombinationLock} 
+    options={{ headerShown: false }}  
+  />
+  <Stack.Screen 
+    name="GenerateQRCode" 
+    component={GenerateQRCode} 
+    options={{ headerShown: false }}  
+  />
+  <Stack.Screen
+        name="MyBikes"
+        component={MyBikesScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };

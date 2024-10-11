@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Button, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, Image, Switch, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
-const AllBikesScreen = () => {
+import BikeImage from '../../assets/bike.png'; // Assuming bike image is stored here
+
+const AllBikesScreen = ({ navigation }) => {
   const [bikes, setBikes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [loadingBikeId, setLoadingBikeId] = useState(null); // Track loading state for individual bikes
 
-  // Function to fetch bikes from the backend using axios
+  // Function to fetch bikes from the backend
   const fetchBikes = async () => {
     setLoading(true); // Show loading indicator
     try {
       const response = await api.get('/bikes/'); // Replace with your actual backend URL
-      setBikes(response.data); // Set the fetched bikes to state
+      const fetchedBikes = response.data.map(bike => ({
+        ...bike,
+        isAvailable: bike.status === 'available' // Set availability based on status from backend
+      }));
+      setBikes(fetchedBikes); // Set the fetched bikes to state
       setError(null); // Clear any previous error
     } catch (err) {
       setError('Failed to load bikes');
@@ -20,61 +29,103 @@ const AllBikesScreen = () => {
     }
   };
 
-  // useEffect to fetch bikes when the component loads
+  // Function to update bike availability on the backend
+  const updateBikeStatus = async (bikeId, isAvailable) => {
+    setLoadingBikeId(bikeId); // Set loading state for the toggled bike
+    try {
+      await api.put('/bikes/status', {
+        bikeId,
+        status: isAvailable ? 'available' : 'maintenance',
+      });
+      setBikes(prevBikes =>
+        prevBikes.map(bike =>
+          bike._id === bikeId ? { ...bike, isAvailable } : bike
+        )
+      );
+      setError(null); // Clear error if update succeeds
+    } catch (err) {
+      setError('Failed to update bike status');
+    } finally {
+      setLoadingBikeId(null); // Reset loading state after update
+    }
+  };
+
+  // Simulate toggling bike availability
+  const toggleAvailability = (bikeId, currentStatus) => {
+    const newStatus = !currentStatus;
+    updateBikeStatus(bikeId, newStatus);
+  };
+
   useEffect(() => {
     fetchBikes();
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>All Bikes</Text>
+    <SafeAreaView className="flex-1 bg-gray-100 p-4">
+      {/* Header with Back Button and Title in a single row */}
+      <View className="flex-row items-center mb-4">
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back-outline" size={28} color="#175E5E" />
+        </TouchableOpacity>
+        <Text className="text-3xl font-bold ml-4 text-teal-800">All Bikes</Text>
+      </View>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#175E5E" />
       ) : error ? (
-        <Text style={styles.error}>{error}</Text>
+        <Text className="text-red-500 text-lg mb-4">{error}</Text>
       ) : (
         <FlatList
           data={bikes}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
-            <View style={styles.bikeItem}>
-              <Text>Owner: {item.ownerId.name}</Text>
-              <Text>Location: {item.currentLocation.lat}, {item.currentLocation.lng}</Text>
-              <Text>Status: {item.status}</Text>
-              <Text>Rental Price: ${item.rentalPrice}</Text>
+            <View className="bg-white p-4 mb-4 rounded-lg shadow-md flex-row items-center">
+              {/* Bike Image */}
+              <Image
+                source={BikeImage}
+                className="w-24 h-24 rounded-lg mr-4"
+                resizeMode="contain"
+              />
+              
+              {/* Bike Details */}
+              <View className="flex-1">
+                <Text className="text-lg font-semibold text-teal-800">{item.name || `Bike ${item._id}`}</Text>
+                <Text className="text-gray-600">Owner: {item.ownerId.name || 'Unknown Owner'}</Text>
+                <Text className="text-gray-600">Rental Price: ${item.rentalPrice}</Text>
+              </View>
+
+              {/* Toggle Button for Availability */}
+              <View className="flex-row items-center">
+                {loadingBikeId === item._id ? (
+                  <ActivityIndicator size="small" color="#175E5E" />
+                ) : (
+                  <>
+                    <Text className={`mr-2 ${item.isAvailable ? 'text-[#182667]' : 'text-red-600'}`}>
+                      {item.isAvailable ? 'Available' : 'Unavailable'}
+                    </Text>
+                    <Switch
+                      value={item.isAvailable}
+                      onValueChange={() => toggleAvailability(item._id, item.isAvailable)}
+                      trackColor={{ false: '#ccc', true: '#182667' }} // Change available color to #182667
+                      thumbColor={item.isAvailable ? '#182667' : '#f4f3f4'}
+                    />
+                  </>
+                )}
+              </View>
             </View>
           )}
         />
       )}
 
       {/* Reload Button */}
-      <Button title="Reload Bikes" onPress={fetchBikes} />
-    </View>
+      <TouchableOpacity
+        className="bg-[#175E5E] p-4 rounded-lg mt-4"
+        onPress={fetchBikes}
+      >
+        <Text className="text-center text-white text-lg font-bold">Reload Bikes</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  bikeItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  error: {
-    color: 'red',
-    fontSize: 18,
-    marginBottom: 10,
-  },
-});
 
 export default AllBikesScreen;

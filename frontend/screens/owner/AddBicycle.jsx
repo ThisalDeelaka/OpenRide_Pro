@@ -17,8 +17,8 @@ const AddBicycle = ({ navigation }) => {
         const storedUser = await AsyncStorage.getItem("user");
         if (storedUser) {
           const user = JSON.parse(storedUser);
-          console.log("Parsed user:", user); // Add this log to check the parsed value
-          setOwnerId(user.id); // Use 'id' instead of '_id'
+          console.log("Parsed user:", user);  // Add this log to check the parsed value
+          setOwnerId(user.id);  // Use 'id' instead of '_id'
         } else {
           console.log("No user found in AsyncStorage");
         }
@@ -28,6 +28,7 @@ const AddBicycle = ({ navigation }) => {
     };
     fetchOwnerId();
   }, []);
+  
 
   const handleAddBicycle = async () => {
     if (!ownerId) {

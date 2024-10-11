@@ -4,10 +4,15 @@ const Bike = require("../models/Bike");
 exports.registerBike = async (req, res) => {
   const { ownerId, currentLocation, rentalPrice, combinationLock } = req.body;
 
+  // Ensure that currentLocation contains both lat and lng
+  if (!currentLocation || !currentLocation.lat || !currentLocation.lng) {
+    return res.status(400).json({ message: "Invalid location data" });
+  }
+
   try {
     const newBike = new Bike({
-      ownerId, // Now ownerId is correctly passed
-      currentLocation,
+      ownerId,
+      currentLocation, // This should be { lat: Number, lng: Number }
       rentalPrice,
       combinationLock,
     });
@@ -54,5 +59,59 @@ exports.deleteBike = async (req, res) => {
     res.json({ message: "Bike deleted successfully" }); // Send success response
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getBikesByOwner = async (req, res) => {
+  const { ownerId } = req.params;
+
+  try {
+    const bikes = await Bike.find({ ownerId });
+    res.status(200).json(bikes);
+  } catch (error) {
+    console.error("Error fetching owner's bikes:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+exports.updateBikeByOwner = async (req, res) => {
+  const { bikeId } = req.params;
+  const { rentalPrice, combinationLock } = req.body;
+
+  try {
+    const updatedBike = await Bike.findByIdAndUpdate(
+      bikeId,
+      { rentalPrice, combinationLock },
+      { new: true }
+    );
+
+    if (!updatedBike) {
+      return res.status(404).json({ message: "Bike not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Bike updated successfully", bike: updatedBike });
+  } catch (error) {
+    console.error("Error updating bike:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+exports.deleteBikeByowner = async (req, res) => {
+  const { bikeId } = req.params;
+
+  try {
+    const bike = await Bike.findById(bikeId);
+
+    if (!bike) {
+      return res.status(404).json({ message: "Bike not found" });
+    }
+
+    await Bike.findByIdAndDelete(bikeId);
+    res.status(200).json({ message: "Bike deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting bike:", error);
+    res.status(500).json({ message: "Server error", error });
   }
 };

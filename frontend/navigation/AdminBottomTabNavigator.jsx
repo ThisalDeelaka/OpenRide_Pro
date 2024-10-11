@@ -1,17 +1,16 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import AllBikesScreen from "../screens/admin/AllBikesScreen";
-import MaintenanceScreen from "../screens/admin/MaintenanceScreen";
-import SecurityScreen from "../screens/admin/SecurityScreen";
-import DashboardScreen from "../screens/admin/DashboardScreen";
+import AdminDashboardScreen from "../screens/admin/AdminDashboardScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import QRScannerScreen from "../screens/user/QRScannerScreen";
 
 const Tab = createBottomTabNavigator();
 
 const AdminBottomTabNavigator = () => {
-  const insets = useSafeAreaInsets(); // To handle safe area padding
+  const insets = useSafeAreaInsets();  // To handle safe area padding
 
   return (
     <Tab.Navigator
@@ -19,44 +18,76 @@ const AdminBottomTabNavigator = () => {
         tabBarIcon: ({ color, size, focused }) => {
           let iconName;
 
-          // Assigning icons based on the route name
-          if (route.name === "AllBikes") {
-            iconName = focused ? "bicycle" : "bicycle-outline";
-          } else if (route.name === "Maintenance") {
-            iconName = focused ? "construct" : "construct-outline";
-          } else if (route.name === "Security") {
-            iconName = focused ? "shield" : "shield-outline";
-          } else if (route.name === "Dashboard") {
-            iconName = focused ? "speedometer" : "speedometer-outline";
+          if (route.name === "AdminHome") {
+            iconName = focused ? "grid" : "grid-outline";
+          } else if (route.name === "QRScannerScreen") {
+            iconName = focused ? "qr-code-outline" : "qr-code-outline";  // QR code icon
+          } else if (route.name === "Profile") {
+            iconName = focused ? "person" : "person-outline";
           }
 
-          return <Ionicons name={iconName} size={focused ? 28 : 24} color={color} />;
+          // Increase the size of the icons for Home and Profile
+          const iconSize = route.name === "AdminHome" || route.name === "Profile" ? (focused ? 32 : 28) : (focused ? 28 : 24);
+
+          return <Ionicons name={iconName} size={iconSize} color={color} />;
         },
-        tabBarActiveTintColor: "#175E5E", // Match the app's primary color
-        tabBarInactiveTintColor: "#A0AEC0", // Soft gray for inactive icons
-        tabBarShowLabel: false, // Hide label for a clean look
+        tabBarActiveTintColor: "#175E5E",  // Teal color for active icons
+        tabBarInactiveTintColor: "#A0AEC0",  // Soft gray for inactive icons
+        tabBarShowLabel: false,  // Hide label for a clean look
         tabBarStyle: {
-          backgroundColor: "#fff", // White background for contrast
-          borderTopLeftRadius: 30, // Rounded top corners for modern look
-          borderTopRightRadius: 30,
-          position: 'absolute',
-          height: 80, // Increase the height for a more spacious design
-          paddingBottom: insets.bottom + 10, // Padding for safe area and design
-          paddingTop: 10, // Extra padding for elevation effect
-          marginHorizontal: 20, // Margin for a floating look
+          backgroundColor: "#B8D8D6",  // Updated background color
+          height: 70,  // Height of the navbar
+          paddingBottom: insets.bottom + 10,  // Padding for safe area
+          paddingTop: 10,
           shadowColor: "#000",
-          shadowOffset: { width: 0, height: 10 }, // Subtle shadow for floating effect
+          shadowOffset: { width: 0, height: 10 },  // Subtle shadow for floating effect
           shadowOpacity: 0.1,
           shadowRadius: 6,
-          elevation: 15, // Elevation for Android devices
+          elevation: 15,  // Elevation for Android devices
+        },
+        tabBarIconStyle: {
+          marginBottom: route.name === "QRScannerScreen" ? -10 : 0, // Slightly lift central QR code button
         },
       })}
     >
-      {/* Defining the screens for each tab */}
-      <Tab.Screen name="AllBikes" component={AllBikesScreen} />
-      <Tab.Screen name="Maintenance" component={MaintenanceScreen} />
-      <Tab.Screen name="Security" component={SecurityScreen} />
-      <Tab.Screen name="Dashboard" component={DashboardScreen} />
+      <Tab.Screen
+        name="AdminHome"
+        component={AdminDashboardScreen}
+        options={{
+          headerShown: false,  // Hides the header for the Admin Dashboard screen
+        }}
+      />
+      
+      {/* Central Floating QR Code Button */}
+      <Tab.Screen
+        name="QRScannerScreen"
+        component={QRScannerScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                position: 'absolute',
+                bottom: 20,  // Float the button above the navbar
+                height: 70,
+                width: 70,
+                borderRadius: 35,
+                backgroundColor: "#175E5E",  // Central button teal color
+                justifyContent: "center",
+                alignItems: "center",
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 10 },
+                shadowOpacity: 0.2,
+                shadowRadius: 5,
+                elevation: 15,  // Elevation for Android
+              }}
+            >
+              <Ionicons name="qr-code-outline" size={32} color="#FFF" />
+            </View>
+          ),
+        }}
+      />
+
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 };

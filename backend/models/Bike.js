@@ -14,6 +14,7 @@ const bikeSchema = new mongoose.Schema({
   },
   rentalPrice: { type: Number, required: true },
   combinationLock: { type: String, required: true }, // Field for combination lock
+  adminaccepted: { type: Boolean, default: false }, // Field for admin acceptance
 });
 
 module.exports = mongoose.model("Bike", bikeSchema);
