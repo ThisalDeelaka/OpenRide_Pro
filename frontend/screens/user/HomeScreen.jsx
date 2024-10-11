@@ -121,7 +121,7 @@ const HomeScreen = ({ navigation }) => {
                     latitude: bike.currentLocation.lat || 37.78825,
                     longitude: bike.currentLocation.lng || -122.4324,
                   }}
-                  title={bike.name || "Unnamed Bike"}
+                  title={bike.bikeName || "Unnamed Bike"}
                   description={bike.status || "Status unknown"}
                   pinColor="#FF7A00"
                 />

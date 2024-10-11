@@ -21,7 +21,7 @@ const BikeListScreen = ({ route, navigation }) => {
       {/* Bike Details */}
       <View className="flex-1">
         <Text className="text-lg font-semibold text-[#175E5E] mb-2">
-          Bike Hoop {item._id}
+          {item.bikeName}
         </Text>
 
         <View className="flex-row items-center justify-between">

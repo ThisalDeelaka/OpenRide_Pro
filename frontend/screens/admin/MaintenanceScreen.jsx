@@ -19,11 +19,11 @@ const AdminMaintenanceScreen = ({ navigation }) => {
       const response = await api.get('/bikes/'); // Replace with actual API call
       const updatedBikes = response.data.map(bike => ({
         ...bike,
-        isUnderMaintenance: bike.status === 'maintenance' // Update the status from backend data
+        isUnderMaintenance: bike.status === 'maintenance' // Mark the bikes as under maintenance based on status
       }));
       setBikes(updatedBikes);
-      // Filter bikes that are unavailable (under maintenance)
-      setFilteredBikes(updatedBikes.filter(bike => bike.isUnderMaintenance));
+      // Initially filter bikes based on run hours
+      setFilteredBikes(updatedBikes.filter(bike => bike.runHours > maintenanceHours));
       setError(null);
     } catch (err) {
       setError('Failed to load bikes');
@@ -32,24 +32,30 @@ const AdminMaintenanceScreen = ({ navigation }) => {
     }
   };
 
+  // Filter bikes based on runtime hours
+  const filterBikes = () => {
+    const filtered = bikes.filter(bike => bike.runHours > maintenanceHours);
+    setFilteredBikes(filtered);
+  };
+
   // Toggle maintenance status of a bike
   const toggleMaintenance = async (bikeId, currentStatus) => {
     try {
       const newStatus = !currentStatus ? 'maintenance' : 'available';
       await api.put('/bikes/update-status', { bikeId, status: newStatus });
-      
+
       // Update the local state with the new status
       setBikes(prevBikes =>
         prevBikes.map(bike =>
           bike._id === bikeId ? { ...bike, isUnderMaintenance: !currentStatus } : bike
         )
       );
-      
-      // Update the filtered list to only show bikes that are under maintenance
+
+      // Update the filtered list based on new maintenance status
       setFilteredBikes(prevBikes =>
         prevBikes.map(bike =>
           bike._id === bikeId ? { ...bike, isUnderMaintenance: !currentStatus } : bike
-        ).filter(bike => bike.isUnderMaintenance) // Only show under maintenance bikes
+        ).filter(bike => bike.runHours > maintenanceHours) // Keep the filter on runtime hours
       );
     } catch (err) {
       Alert.alert('Error', 'Failed to update bike status');
@@ -70,12 +76,26 @@ const AdminMaintenanceScreen = ({ navigation }) => {
         <Text className="text-3xl font-bold ml-4 text-teal-800">Maintenance</Text>
       </View>
 
+      {/* Input for Maintenance Hours Threshold */}
+      <View className="flex-row items-center mb-4">
+        <Text className="text-lg mr-4 text-teal-800">Maintenance After (hours):</Text>
+        <TextInput
+          value={String(maintenanceHours)}
+          onChangeText={(value) => setMaintenanceHours(parseInt(value))}
+          keyboardType="numeric"
+          className="border p-2 w-20 text-center"
+        />
+        <TouchableOpacity className="bg-[#175E5E] p-2 rounded-lg ml-4" onPress={filterBikes}>
+          <Text className="text-white text-lg">Filter</Text>
+        </TouchableOpacity>
+      </View>
+
       {loading ? (
         <ActivityIndicator size="large" color="#175E5E" />
       ) : error ? (
         <Text className="text-red-500 text-lg mb-4">{error}</Text>
       ) : filteredBikes.length === 0 ? (
-        <Text className="text-lg text-teal-800">No bikes under maintenance</Text>
+        <Text className="text-lg text-teal-800">No bikes exceed the maintenance hours</Text>
       ) : (
         <FlatList
           data={filteredBikes}
