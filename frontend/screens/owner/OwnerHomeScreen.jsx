@@ -171,30 +171,29 @@ const OwnerHomeScreen = ({ navigation }) => {
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <TouchableOpacity
-              className="flex-row items-center bg-white p-3 mb-3 rounded-lg shadow-md"
-              onPress={() =>
-                navigation.navigate("BikeDetails", { bikeId: item._id })
-              }
-            >
-              <Image
-                source={BikeImage}
-                className="w-20 h-20 rounded-lg mr-4"
-                resizeMode="contain"
-              />
-              <View className="flex-1">
-                {/* Display bike name */}
-                <Text className="text-lg font-semibold text-[#175E5E]">
-                  {item.bikeName || `Bike ${item._id}`}
-                </Text>
-                <Text className="text-gray-600">
-                  Status: {item.isAvailable ? "Available" : "Not Available"}
-                </Text>
-                <Text className="text-gray-600">
-                  Rental Price: ${item.rentalPrice}
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={24} color="#175E5E" />
-            </TouchableOpacity>
+  className="flex-row items-center bg-white p-3 mb-3 rounded-lg shadow-md"
+  onPress={() => navigation.navigate("BikeDetails", { bike: item })} // Pass the whole bike object
+>
+  <Image
+    source={BikeImage}
+    className="w-20 h-20 rounded-lg mr-4"
+    resizeMode="contain"
+  />
+  <View className="flex-1">
+    {/* Display bike name */}
+    <Text className="text-lg font-semibold text-[#175E5E]">
+      {item.bikeName || `Bike ${item._id}`}
+    </Text>
+    <Text className="text-gray-600">
+      Status: {item.isAvailable ? "Available" : "Not Available"}
+    </Text>
+    <Text className="text-gray-600">
+      Rental Price: ${item.rentalPrice}
+    </Text>
+  </View>
+  <Ionicons name="chevron-forward" size={24} color="#175E5E" />
+</TouchableOpacity>
+
           )}
           showsVerticalScrollIndicator={false}
         />

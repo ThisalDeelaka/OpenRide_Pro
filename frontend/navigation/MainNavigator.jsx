@@ -8,8 +8,7 @@ import MaintenanceReportsScreen from "../screens/incident/MaintenanceReportsScre
 import AdminBottomTabNavigator from "./AdminBottomTabNavigator";
 import OwnerBottomTabNavigator from "./BikeOwnerTabNavigator";
 import OnboardingScreen from "../screens/onboarding/OnboardingScreen";
-import AllBikesScreen from "../screens/admin/AllBikesScreen"; // Import AllBikesScreen
-import AddBicycle from "../screens/owner/AddBicycle"; // Import AddBicycle
+import AllBikesScreen from "../screens/admin/AllBikesScreen"; 
 import BikeListScreen from "../screens/user/BikeListScreen";
 import MaintenanceScreen from "../screens/admin/MaintenanceScreen";
 import AddBicycleDetails from "../screens/owner/AddBicycleDetails";
@@ -25,6 +24,8 @@ import IncidentScreen from "../screens/incident/IncidentScreen";
 import AdminRequestsScreen from "../screens/admin/AdminRequestsScreen";
 import RideTrackingScreen from "../screens/user/RideTrackingScreen";
 import EndTripScreen from "../screens/user/EndTripScreen";
+import PaymentScreen from "../screens/user/PaymentScreen";
+import BikeDetailsScreen from "../screens/owner/BikeDetailsScreen";
 
 
 
@@ -92,11 +93,7 @@ const MainNavigator = () => {
       />
 
       {/* bike owner*/}
-      <Stack.Screen
-        name="AddBicycle"
-        component={AddBicycle}
-        options={{ headerShown: false }}
-      />
+      
 
 <Stack.Screen 
     name="AddBicycleDetails" 
@@ -116,6 +113,11 @@ const MainNavigator = () => {
   <Stack.Screen
         name="MyBikes"
         component={MyBikesScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="BikeDetails"
+        component={BikeDetailsScreen}
         options={{ headerShown: false }}
       />
       {/* rider Flow */}
@@ -147,6 +149,11 @@ const MainNavigator = () => {
     <Stack.Screen
     name="EndTripScreen"
     component={EndTripScreen}
+    options={{ headerShown: false }}
+    />
+    <Stack.Screen
+    name="PaymentScreen"
+    component={PaymentScreen}
     options={{ headerShown: false }}
     />
 
