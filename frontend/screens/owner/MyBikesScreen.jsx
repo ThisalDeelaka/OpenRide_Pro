@@ -12,12 +12,13 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
-  KeyboardAvoidingView, Platform,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
-import api from "../../services/api"; 
+import api from "../../services/api";
 import bikeImg from "../../assets/bike.png"; // Assuming you have this image in the assets folder
 
 const MyBikesScreen = ({ navigation }) => {
@@ -26,7 +27,7 @@ const MyBikesScreen = ({ navigation }) => {
   const [editingBikeId, setEditingBikeId] = useState(null);
   const [newRentalPrice, setNewRentalPrice] = useState("");
   const [newCombinationLock, setNewCombinationLock] = useState("");
-  const [isEditModalVisible, setEditModalVisible] = useState(false); 
+  const [isEditModalVisible, setEditModalVisible] = useState(false);
 
   const fetchBikes = async () => {
     try {
@@ -44,14 +45,14 @@ const MyBikesScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    fetchBikes(); 
+    fetchBikes();
   }, []);
 
   const deleteBike = async (bikeId) => {
     try {
       await api.delete(`/bikes/${bikeId}`);
       Alert.alert("Success", "Bike deleted successfully");
-      fetchBikes(); 
+      fetchBikes();
     } catch (error) {
       Alert.alert("Error", "Failed to delete the bike.");
     }
@@ -65,8 +66,8 @@ const MyBikesScreen = ({ navigation }) => {
       };
       await api.put(`/bikes/${editingBikeId}`, updatedData);
       Alert.alert("Success", "Bike details updated successfully");
-      setEditModalVisible(false); 
-      fetchBikes(); 
+      setEditModalVisible(false);
+      fetchBikes();
     } catch (error) {
       Alert.alert("Error", "Failed to update bike details.");
     }
@@ -76,7 +77,7 @@ const MyBikesScreen = ({ navigation }) => {
     setEditingBikeId(item._id);
     setNewRentalPrice(item.rentalPrice.toString());
     setNewCombinationLock(item.combinationLock);
-    setEditModalVisible(true); 
+    setEditModalVisible(true);
   };
 
   const renderRightActions = (bikeId) => (
@@ -97,10 +98,13 @@ const MyBikesScreen = ({ navigation }) => {
         >
           <Image source={bikeImg} className="w-16 h-16 rounded-lg mr-4" />
           <View className="flex-1">
+            {/* Updated bikeName field */}
             <Text className="text-xl font-semibold text-[#175E5E]">
-              {item.name || `Bike ${item._id}`}
+              {item.bikeName || `Bike ${item._id}`}
             </Text>
-            <Text className="text-gray-600">Price: ${item.rentalPrice}/hour</Text>
+            <Text className="text-gray-600">
+              Price: ${item.rentalPrice}/hour
+            </Text>
             <Text className="text-gray-600">Lock: {item.combinationLock}</Text>
           </View>
         </TouchableOpacity>
@@ -126,83 +130,94 @@ const MyBikesScreen = ({ navigation }) => {
           renderItem={renderBike}
           contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
           ListEmptyComponent={() => (
-            <Text className="text-center text-lg">You have no bikes added.</Text>
+            <Text className="text-center text-lg">
+              You have no bikes added.
+            </Text>
           )}
         />
       )}
 
       {/* Edit Modal */}
       <Modal
-  visible={isEditModalVisible}
-  animationType="slide"
-  transparent={true}
-  onRequestClose={() => setEditModalVisible(false)}
->
-  {/* Background overlay */}
-  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <View className="flex-1 justify-end" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
-      {/* Keyboard Avoiding View */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1, justifyContent: 'flex-end' }}
+        visible={isEditModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setEditModalVisible(false)}
       >
-        {/* Modal content */}
-        <View
-          className="bg-white rounded-t-2xl shadow-lg p-6"
-          style={{
-            maxHeight: '60%', // Adjust modal height
-            borderTopLeftRadius: 25,
-            borderTopRightRadius: 25,
-          }}
-        >
-          {/* Close Icon */}
-          <TouchableOpacity
-            onPress={() => setEditModalVisible(false)}
-            className="absolute top-4 right-4"
+        {/* Background overlay */}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View
+            className="flex-1 justify-end"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
           >
-            <Ionicons name="close" size={30} color="gray" />
-          </TouchableOpacity>
+            {/* Keyboard Avoiding View */}
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ flex: 1, justifyContent: "flex-end" }}
+            >
+              {/* Modal content */}
+              <View
+                className="bg-white rounded-t-2xl shadow-lg p-6"
+                style={{
+                  maxHeight: "60%", // Adjust modal height
+                  borderTopLeftRadius: 25,
+                  borderTopRightRadius: 25,
+                }}
+              >
+                {/* Close Icon */}
+                <TouchableOpacity
+                  onPress={() => setEditModalVisible(false)}
+                  className="absolute top-4 right-4"
+                >
+                  <Ionicons name="close" size={30} color="gray" />
+                </TouchableOpacity>
 
-          <Text className="text-2xl font-bold mb-4">Edit Bike Details</Text>
+                <Text className="text-2xl font-bold mb-4">
+                  Edit Bike Details
+                </Text>
 
-          {/* Rental Price Input */}
-          <View className="mb-4">
-            <Text className="text-lg font-semibold text-gray-800 mb-2">Rental Price ($)</Text>
-            <TextInput
-              value={newRentalPrice}
-              onChangeText={setNewRentalPrice}
-              placeholder="Enter new rental price"
-              keyboardType="numeric"
-              className="bg-gray-200 p-4 rounded-lg"
-            />
+                {/* Rental Price Input */}
+                <View className="mb-4">
+                  <Text className="text-lg font-semibold text-gray-800 mb-2">
+                    Rental Price ($)
+                  </Text>
+                  <TextInput
+                    value={newRentalPrice}
+                    onChangeText={setNewRentalPrice}
+                    placeholder="Enter new rental price"
+                    keyboardType="numeric"
+                    className="bg-gray-200 p-4 rounded-lg"
+                  />
+                </View>
+
+                {/* Combination Lock Input */}
+                <View className="mb-6">
+                  <Text className="text-lg font-semibold text-gray-800 mb-2">
+                    Combination Lock Code
+                  </Text>
+                  <TextInput
+                    value={newCombinationLock}
+                    onChangeText={setNewCombinationLock}
+                    placeholder="Enter new combination lock"
+                    className="bg-gray-200 p-4 rounded-lg"
+                  />
+                </View>
+
+                {/* Save Button */}
+                <TouchableOpacity
+                  onPress={saveBikeDetails}
+                  className="bg-[#175E5E] py-4 rounded-lg"
+                  style={{ backgroundColor: "#175E5E" }}
+                >
+                  <Text className="text-center text-white font-bold">
+                    Save Changes
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </KeyboardAvoidingView>
           </View>
-
-          {/* Combination Lock Input */}
-          <View className="mb-6">
-            <Text className="text-lg font-semibold text-gray-800 mb-2">Combination Lock Code</Text>
-            <TextInput
-              value={newCombinationLock}
-              onChangeText={setNewCombinationLock}
-              placeholder="Enter new combination lock"
-              className="bg-gray-200 p-4 rounded-lg"
-            />
-          </View>
-
-          {/* Save Button */}
-          <TouchableOpacity
-            onPress={saveBikeDetails}
-            className="bg-[#175E5E] py-4 rounded-lg"
-            style={{ backgroundColor: '#175E5E' }}
-          >
-            <Text className="text-center text-white font-bold">Save Changes</Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </View>
-  </TouchableWithoutFeedback>
-</Modal>
-
-
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };
