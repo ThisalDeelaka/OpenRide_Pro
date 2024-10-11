@@ -55,15 +55,17 @@ const AddBicycleDetails = ({ navigation }) => {
   };
 
   const handleNext = () => {
-    if (!bikeName || !rentalPrice || !selectedLocation) {
-      Alert.alert('Error', 'Please fill all fields and select the bike location.');
+    if (!bikeName || !rentalPrice) {
+      Alert.alert('Error', 'Please fill all fields.');
       return;
     }
+
+    const bikeLocation = selectedLocation || currentLocation; // Use current location if no location is selected
 
     navigation.navigate('AddCombinationLock', {
       bikeName,
       rentalPrice,
-      currentLocation: selectedLocation,
+      currentLocation: bikeLocation,
       images,
     });
   };
