@@ -6,7 +6,7 @@ import BikeImage from "../../assets/bike.png"; // Assuming you have the bike ima
 import { SafeAreaView } from 'react-native-safe-area-context'; // Ensure it handles device notches
 
 const EndTripScreen = ({ route, navigation }) => {
-  const { rideId,timeee } = route.params;
+  const { rideId, timeee } = route.params;
   const [totalSpend, setTotalSpend] = useState(0);
   const [distance, setDistance] = useState(0);
   const [time, setTime] = useState("00:00:00");
@@ -18,8 +18,8 @@ const EndTripScreen = ({ route, navigation }) => {
         const response = await api.get(`/rides/${rideId}`);
         const rideData = response.data;
         setTotalSpend(rideData.totalFare);
-        setDistance(rideData.distance); 
-        setTime(formatTime(timeee)); 
+        setDistance(rideData.distance);
+        setTime(formatTime(timeee));
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching ride data:", error);
@@ -44,7 +44,7 @@ const EndTripScreen = ({ route, navigation }) => {
       const response = await api.post("/rides/end", { rideId });
       if (response.status === 200) {
         Alert.alert("Trip Ended", "Your trip has ended successfully.");
-        navigation.navigate("HomeScreen"); // Navigate to the home screen after ending the trip
+        navigation.navigate("PaymentScreen"); // Navigate to the home screen after ending the trip
       } else {
         Alert.alert("Error", "Failed to end the trip.");
       }
@@ -59,42 +59,44 @@ const EndTripScreen = ({ route, navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       {/* Header Section */}
-      <View style={{ position: 'absolute', top: 0, width: '100%', flexDirection: 'row', justifyContent: 'space-between', padding: 16, backgroundColor: '#175E5E', height: 80 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: '#175E5E', height: 80 }}>
         {/* Back Arrow */}
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 10 }}>
           <Ionicons name="arrow-back-outline" size={30} color="#FFF" />
         </TouchableOpacity>
 
         {/* "Your Bike" Section */}
-        <TouchableOpacity style={{ backgroundColor: '#DAEBF0', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20, flexDirection: 'row', alignItems: 'center' }}>
-          <Ionicons name="bicycle-outline" size={20} color="#175E5E" />
-          <Text style={{ color: '#175E5E', marginLeft: 8 }}>Your Bike</Text>
-        </TouchableOpacity>
+        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity style={{ backgroundColor: '#DAEBF0', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20, flexDirection: 'row', alignItems: 'center' }}>
+            <Ionicons name="bicycle-outline" size={20} color="#175E5E" />
+            <Text style={{ color: '#175E5E', marginLeft: 8 }}>Your Bike</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Empty View for alignment */}
         <View style={{ width: 30 }} />
       </View>
 
       {/* Bike Image */}
-      <View className="flex items-center mb-6 mt-4">
+      <View style={{ alignItems: 'center', marginVertical: 20 }}>
         <Image source={BikeImage} style={{ width: 300, height: 290 }} resizeMode="contain" />
       </View>
 
       {/* Total Spend, Distance, and Time */}
-      <View className="bg-white rounded-lg p-4 shadow-lg mb-6">
-        <View className="bg-[#E8F8A1] p-4 rounded-lg mb-4">
-          <Text className="text-center text-2xl font-bold">{totalSpend} LKR</Text>
-          <Text className="text-center text-lg text-gray-600">Total spend</Text>
-        </View>
+      <View style={{ backgroundColor: '#FFFFFF', borderRadius: 10, padding: 20, marginHorizontal: 16, marginBottom: 20, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }, elevation: 3 }}>
+  <View style={{ backgroundColor: '#E8F8A1', borderRadius: 10, padding: 15, marginBottom: 15 }}>
+    <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: 'bold' }}>LKR {totalSpend.toFixed(2)}</Text>
+    <Text style={{ textAlign: 'center', fontSize: 16, color: '#6B7280' }}>Total Spend</Text>
+  </View>
 
-        <View className="flex-row justify-between mb-4">
-          <View className="bg-[#F8E8E8] p-4 rounded-lg w-40">
-            <Text className="text-center text-2xl font-bold">{distance} km</Text>
-            <Text className="text-center text-lg text-gray-600">Distance</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ backgroundColor: '#F8E8E8', borderRadius: 10, padding: 15, width: '48%' }}>
+            <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: 'bold' }}>{distance} km</Text>
+            <Text style={{ textAlign: 'center', fontSize: 16, color: '#6B7280' }}>Distance</Text>
           </View>
-          <View className="bg-[#F8E8E8] p-4 rounded-lg w-40">
-            <Text className="text-center text-2xl font-bold">{timeee}</Text>
-            <Text className="text-center text-lg text-gray-600">Time</Text>
+          <View style={{ backgroundColor: '#F8E8E8', borderRadius: 10, padding: 15, width: '48%' }}>
+            <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: 'bold' }}>{timeee}</Text>
+            <Text style={{ textAlign: 'center', fontSize: 16, color: '#6B7280' }}>Time</Text>
           </View>
         </View>
       </View>
@@ -102,7 +104,7 @@ const EndTripScreen = ({ route, navigation }) => {
       {/* End Trip Button */}
       <TouchableOpacity
         onPress={handleEndTrip}
-        className={`bg-[#175E5E] p-4 rounded-full mx-6 flex-row justify-center items-center ${isLoading ? "opacity-50" : ""}`}
+        style={{ backgroundColor: '#175E5E', paddingVertical: 15, borderRadius: 30, marginHorizontal: 16, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', opacity: isLoading ? 0.5 : 1 }}
         disabled={isLoading}
       >
         {isLoading ? (
@@ -110,7 +112,7 @@ const EndTripScreen = ({ route, navigation }) => {
         ) : (
           <>
             <Ionicons name="chevron-forward-outline" size={24} color="#FFF" />
-            <Text className="text-white text-lg font-bold ml-2">End Trip</Text>
+            <Text style={{ color: '#FFF', fontSize: 18, fontWeight: 'bold', marginLeft: 8 }}>End Trip</Text>
           </>
         )}
       </TouchableOpacity>
