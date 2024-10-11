@@ -12,6 +12,10 @@ import AllBikesScreen from "../screens/admin/AllBikesScreen"; // Import AllBikes
 import AddBicycle from "../screens/owner/AddBicycle"; // Import AddBicycle
 import BikeListScreen from "../screens/user/BikeListScreen";
 import MaintenanceScreen from "../screens/admin/MaintenanceScreen";
+import AddBicycleDetails from "../screens/owner/AddBicycleDetails";
+import AddCombinationLock from "../screens/owner/AddCombinationLock";
+import GenerateQRCode from "../screens/owner/GenerateQRCode";
+
 
 
 const Stack = createStackNavigator();
@@ -64,11 +68,7 @@ const MainNavigator = () => {
         component={MaintenanceReportsScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="AddBicycle"
-        component={AddBicycle}
-        options={{ headerShown: false }}
-      />
+      
       <Stack.Screen
         name="NearBikeList"
         component={BikeListScreen}
@@ -84,6 +84,29 @@ const MainNavigator = () => {
         component={MaintenanceScreen} 
         options={{ headerShown: false }} 
       />
+
+      {/* bike owner*/}
+      <Stack.Screen
+        name="AddBicycle"
+        component={AddBicycle}
+        options={{ headerShown: false }}
+      />
+
+<Stack.Screen 
+    name="AddBicycleDetails" 
+    component={AddBicycleDetails} 
+    options={{ headerShown: false }}  // Hide header
+  />
+  <Stack.Screen 
+    name="AddCombinationLock" 
+    component={AddCombinationLock} 
+    options={{ headerShown: false }}  // Hide header
+  />
+  <Stack.Screen 
+    name="GenerateQRCode" 
+    component={GenerateQRCode} 
+    options={{ headerShown: false }}  // Hide header
+  />
     </Stack.Navigator>
   );
 };

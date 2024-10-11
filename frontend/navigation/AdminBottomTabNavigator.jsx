@@ -9,7 +9,7 @@ import QRScannerScreen from "../screens/user/QRScannerScreen";
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabNavigator = () => {
+const AdminBottomTabNavigator = () => {
   const insets = useSafeAreaInsets();  // To handle safe area padding
 
   return (
@@ -19,7 +19,6 @@ const BottomTabNavigator = () => {
           let iconName;
 
           if (route.name === "AdminHome") {
-            // Updated to dashboard icon
             iconName = focused ? "grid" : "grid-outline";
           } else if (route.name === "QRScannerScreen") {
             iconName = focused ? "qr-code-outline" : "qr-code-outline";  // QR code icon
@@ -93,4 +92,4 @@ const BottomTabNavigator = () => {
   );
 };
 
-export default BottomTabNavigator;
+export default AdminBottomTabNavigator;

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert, Modal } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Modal, View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../services/api";
+
 
 const DrawerMenu = ({ visible, onClose, navigation }) => {
   return (
@@ -20,7 +22,7 @@ const DrawerMenu = ({ visible, onClose, navigation }) => {
           </TouchableOpacity>
           <Text className="text-2xl font-bold text-[#175E5E] mb-5">Menu</Text>
 
-          <TouchableOpacity className="flex-row items-center mb-4" onPress={() => navigation.navigate("AddBike")}>
+          <TouchableOpacity className="flex-row items-center mb-4" onPress={() => navigation.navigate("AddBicycleDetails")}>
             <Ionicons name="add-circle-outline" size={22} color="#175E5E" />
             <Text className="ml-4 text-lg text-[#175E5E]">Add Bicycle</Text>
           </TouchableOpacity>
@@ -41,7 +43,7 @@ const DrawerMenu = ({ visible, onClose, navigation }) => {
           </TouchableOpacity>
 
           <TouchableOpacity className="flex-row items-center mb-4" onPress={() => navigation.navigate("Maintenance")}>
-            <Ionicons name="wrench-outline" size={22} color="#175E5E" />
+            <Ionicons name="construct-outline" size={22} color="#175E5E" />
             <Text className="ml-4 text-lg text-[#175E5E]">Maintenance</Text>
           </TouchableOpacity>
 
@@ -50,7 +52,7 @@ const DrawerMenu = ({ visible, onClose, navigation }) => {
             <Text className="ml-4 text-lg text-[#175E5E]">History</Text>
           </TouchableOpacity>
         </View>
-        
+
         {/* Overlay to close the drawer */}
         <TouchableOpacity className="flex-1" onPress={onClose} />
       </View>
@@ -60,21 +62,28 @@ const DrawerMenu = ({ visible, onClose, navigation }) => {
 
 const OwnerHomeScreen = ({ navigation }) => {
   const [bikes, setBikes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isDrawerVisible, setDrawerVisible] = useState(false); // Manage drawer visibility
 
   // Fetch the list of bikes owned by the owner
   useEffect(() => {
     const fetchBikes = async () => {
       try {
-        const response = await api.get("/owner/bikes"); // Replace with your actual API endpoint
-        if (response.data && Array.isArray(response.data)) {
-          setBikes(response.data);
-        } else {
-          throw new Error("Invalid data format");
+        const storedUser = await AsyncStorage.getItem("user");
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          const response = await api.get(`/bikes/owner/${user.id}`);
+          if (response.data && Array.isArray(response.data)) {
+            setBikes(response.data);
+          } else {
+            throw new Error("Invalid data format");
+          }
         }
       } catch (error) {
         console.error("Error fetching bikes:", error);
         Alert.alert("Error", "Failed to load bikes");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -115,7 +124,10 @@ const OwnerHomeScreen = ({ navigation }) => {
 
       {/* Bikes Overview */}
       <Text className="text-2xl font-bold mb-4">Your Bikes</Text>
-      {bikes.length > 0 ? (
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#175E5E" />
+      ) : bikes.length > 0 ? (
         <FlatList
           data={bikes}
           keyExtractor={(item) => item._id}
