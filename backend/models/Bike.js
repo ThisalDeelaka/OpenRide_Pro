@@ -19,11 +19,12 @@ const bikeSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["available", "maintenance","in use"],
-    default: "available",
+    enum: ["available", "maintenance","in use","unavailable"],
+    default: "unavailable",
   },
   rentalPrice: { type: Number, required: true },
   combinationLock: { type: String, required: true }, // Field for combination lock
+  adminAccepted: { type: Boolean, default: false }, // Field for admin approval
 });
 
 module.exports = mongoose.model("Bike", bikeSchema);

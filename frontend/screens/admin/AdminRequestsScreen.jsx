@@ -1,22 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import api from "../../services/api";
 
 const AdminRegistrationRequests = ({ navigation }) => {
-  // Hardcoded data for registration requests
-  const [requests, setRequests] = useState([
-    { id: "1", ownerName: "John Doe", bikeModel: "Model X", status: "pending" },
-    { id: "2", ownerName: "Jane Smith", bikeModel: "Model Y", status: "pending" },
-    { id: "3", ownerName: "Mike Johnson", bikeModel: "Model Z", status: "pending" },
-  ]);
+  const [requests, setRequests] = useState([]);
+
+  // Fetch registration requests from the backend
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const response = await api.get("/bikes/"); // Fetch bikes from the backend
+        // Filter bikes where adminAccepted is false
+        const pendingRequests = response.data.filter(bike => !bike.adminAccepted);
+        setRequests(pendingRequests);
+      } catch (error) {
+        console.error("Error fetching requests:", error);
+      }
+    };
+
+    fetchRequests();
+  }, []);
 
   // Function to handle acceptance of registration
-  const acceptRequest = (id) => {
-    setRequests((prevRequests) =>
-      prevRequests.map((request) =>
-        request.id === id ? { ...request, status: "accepted" } : request
-      )
-    );
+  const acceptRequest = async (id) => {
+    try {
+      const response = await api.put(`/bikes/upbikes/${id}`, { 
+        adminAccepted: true,
+        status: "available" // Update the bike's status to available
+      });
+
+      // Update the state to reflect the changes
+      setRequests((prevRequests) =>
+        prevRequests.map((request) =>
+          request._id === id ? { ...request, adminAccepted: true, status: "available" } : request
+        )
+      );
+      console.log("Request accepted:", response.data); // Log the updated bike data
+    } catch (error) {
+      console.error("Error accepting request:", error);
+    }
   };
 
   // Render each request item
@@ -35,24 +58,23 @@ const AdminRegistrationRequests = ({ navigation }) => {
       }}
     >
       <View>
-        {/* Text components wrapping all string content */}
         <Text style={{ fontSize: 18, fontWeight: "bold", color: "#175E5E" }}>
-          {item.ownerName}
+          {item.ownerId.name} {/* Assuming ownerId has a name property */}
         </Text>
-        <Text style={{ color: "#606060" }}>Bike Model: {item.bikeModel}</Text>
+        <Text style={{ color: "#606060" }}>Bike Model: {item.bikeName}</Text>
         <Text
           style={{
-            color: item.status === "accepted" ? "#34D399" : "#F87171",
+            color: item.adminAccepted ? "#34D399" : "#F87171",
             fontSize: 14,
           }}
         >
-          Status: {item.status}
+          Status: {item.adminAccepted ? "Accepted" : "Pending"}
         </Text>
       </View>
 
-      {item.status === "pending" && (
+      {!item.adminAccepted && (
         <TouchableOpacity
-          onPress={() => acceptRequest(item.id)}
+          onPress={() => acceptRequest(item._id)} // Use _id for the MongoDB ID
           style={{
             backgroundColor: "#34D399",
             padding: 12,
@@ -72,7 +94,6 @@ const AdminRegistrationRequests = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#F3F4F6", padding: 16 }}>
-      {/* Header Section */}
       <View
         style={{
           flexDirection: "row",
@@ -83,7 +104,6 @@ const AdminRegistrationRequests = ({ navigation }) => {
           alignItems: "center",
         }}
       >
-        {/* Back Arrow */}
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={{ padding: 10 }}
@@ -91,19 +111,16 @@ const AdminRegistrationRequests = ({ navigation }) => {
           <Ionicons name="arrow-back-outline" size={30} color="#FFF" />
         </TouchableOpacity>
 
-        {/* Wrap the title inside a Text component */}
         <Text style={{ fontSize: 18, fontWeight: "bold", color: "#FFF" }}>
           Registration Requests
         </Text>
 
-        {/* Empty View for alignment */}
         <View style={{ width: 30 }} />
       </View>
 
-      {/* Registration Requests List */}
       <FlatList
         data={requests}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id} // Use _id as the key
         renderItem={renderRequestItem}
         ListEmptyComponent={
           <Text style={{ textAlign: "center", fontSize: 16, color: "#606060" }}>
