@@ -8,6 +8,7 @@ const {
   getBikesByOwner,
   deleteBikeByowner,
   updateBikeByOwner,
+  updateAdminAcceptance,
 } = require("../controllers/bikeController");
 const router = express.Router();
 
@@ -18,6 +19,7 @@ router.put("/status", updateBikeStatus);
 router.delete("/:bikeId", deleteBike); // Handle bike deletion
 router.get("/owner/:ownerId", getBikesByOwner);
 router.put('/:bikeId', updateBikeByOwner); // For updating bike
+router.put('/upbikes/:id', updateAdminAcceptance); // `:id` is a route parameter for bike ID
 router.delete('/:bikeId', deleteBikeByowner); // For deleting bike
 
 

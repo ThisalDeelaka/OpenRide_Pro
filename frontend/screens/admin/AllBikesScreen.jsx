@@ -89,7 +89,7 @@ const AllBikesScreen = ({ navigation }) => {
               
               {/* Bike Details */}
               <View className="flex-1">
-                <Text className="text-lg font-semibold text-teal-800">{item.name || `Bike ${item._id}`}</Text>
+                <Text className="text-lg font-semibold text-teal-800">{item.bikeName}</Text>
                 <Text className="text-gray-600">Owner: {item.ownerId.name || 'Unknown Owner'}</Text>
                 <Text className="text-gray-600">Rental Price: ${item.rentalPrice}</Text>
               </View>

@@ -68,6 +68,32 @@ exports.updateBikeStatus = async (req, res) => {
   }
 };
 
+// Function to update admin acceptance status and bike status
+exports.updateAdminAcceptance = async (req, res) => {
+  const { id } = req.params; // Get bike ID from request parameters
+
+  try {
+    // Find the bike by ID and update adminAccepted and status
+    const updatedBike = await Bike.findByIdAndUpdate(
+      id,
+      {
+        adminAccepted: true,
+        status: "available", // Change status to available
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedBike) {
+      return res.status(404).json({ message: "Bike not found" });
+    }
+
+    res.json(updatedBike); // Return the updated bike data
+  } catch (error) {
+    console.error("Error updating bike acceptance:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // Delete a bike
 exports.deleteBike = async (req, res) => {
   const { bikeId } = req.params; // Get bikeId from request parameters
