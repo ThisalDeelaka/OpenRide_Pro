@@ -77,29 +77,30 @@ const StartTripScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
       {/* Header Section */}
-      <View className="flex-row items-center justify-between p-6 bg-[#175E5E] h-20">
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16, backgroundColor: '#175E5E', height: 80 }}>
         {/* Back Arrow */}
-        <TouchableOpacity onPress={() => navigation.goBack()} className="rounded-full p-2">
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 10 }}>
           <Ionicons name="arrow-back-outline" size={30} color="#FFF" />
         </TouchableOpacity>
 
-        <View style={{ width: 30 }} /> {/* Empty View for alignment */}
+        {/* Empty View for alignment */}
+        <View style={{ width: 30 }} />
       </View>
 
       {/* Bike Info and Start Trip Section */}
-      <View className="absolute bottom-0 w-full p-6 bg-white shadow-lg">
-        <Text className="text-2xl font-bold text-center">Start Trip</Text>
+      <View style={{ position: 'absolute', bottom: 0, width: '100%', padding: 16, backgroundColor: 'white', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 5 }}>
+        <Text style={{ fontSize: 24, fontWeight: 'bold', textAlign: 'center' }}>Start Trip</Text>
 
         {/* Bike Details */}
-        <View className="flex-row items-center justify-between mt-4">
-          <View className="ml-4">
-            <Text className="text-xl font-semibold">Bike Hoop</Text>
-            <Text className="text-gray-600 mt-1">3.2 km</Text>
-            <View className="flex-row items-center mt-1">
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 16 }}>
+          <View style={{ marginLeft: 16 }}>
+            <Text style={{ fontSize: 20, fontWeight: '600' }}>Bike Hoop</Text>
+            <Text style={{ color: '#666', marginTop: 8 }}>3.2 km</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
               <Ionicons name="location-outline" size={20} color="#34D399" />
-              <Text className="text-green-500 ml-1">Available</Text>
+              <Text style={{ color: '#34D399', marginLeft: 8 }}>Available</Text>
             </View>
           </View>
         </View>
@@ -107,10 +108,10 @@ const StartTripScreen = ({ route, navigation }) => {
         {/* Start Biking Button */}
         <TouchableOpacity
           onPress={handleStartRide}
-          className="bg-[#202A43] py-4 rounded-full mt-6"
+          style={{ backgroundColor: '#202A43', paddingVertical: 16, borderRadius: 50, marginTop: 16 }}
           disabled={isLoading}
         >
-          <Text className="text-center text-white text-lg font-bold">
+          <Text style={{ textAlign: 'center', color: 'white', fontSize: 18, fontWeight: 'bold' }}>
             {isLoading ? "Starting Ride..." : "Start Biking"}
           </Text>
         </TouchableOpacity>
