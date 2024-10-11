@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Image, Alert, ScrollView } fro
 import { Ionicons } from '@expo/vector-icons';
 
 const AddCombinationLock = ({ route, navigation }) => {
-  const { bikeName, rentalPrice, images } = route.params; // Bike details from previous screen
+  const { bikeName, rentalPrice, currentLocation, images } = route.params; // Bike details from previous screen
   const [combinationLock, setCombinationLock] = useState('');
 
   const handleNext = () => {
@@ -16,6 +16,7 @@ const AddCombinationLock = ({ route, navigation }) => {
     navigation.navigate('GenerateQRCode', {
       bikeName,
       rentalPrice,
+      currentLocation,
       images,
       combinationLock,
     });
@@ -34,7 +35,7 @@ const AddCombinationLock = ({ route, navigation }) => {
       {/* Scrollable Form */}
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         
-        {/* Lock Image with rounded corners */}
+        {/* Lock Image */}
         <View className="mb-6 justify-center items-center">
           <Image
             source={require('../../assets/lock.jpg')} 
@@ -56,7 +57,7 @@ const AddCombinationLock = ({ route, navigation }) => {
         </View>
       </ScrollView>
 
-      {/* Next Button - Sticky at the Bottom */}
+      {/* Next Button */}
       <View className="absolute bottom-0 left-0 right-0 p-4 bg-[#F3F4F6] border-t border-gray-200">
         <TouchableOpacity
           onPress={handleNext}

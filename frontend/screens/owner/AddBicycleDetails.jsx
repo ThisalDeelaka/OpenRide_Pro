@@ -60,12 +60,25 @@ const AddBicycleDetails = ({ navigation }) => {
       return;
     }
 
-    const bikeLocation = selectedLocation || currentLocation; // Use current location if no location is selected
+    const bikeLocation = selectedLocation || currentLocation;
 
+    // Ensure the location is valid before proceeding
+    if (!bikeLocation || !bikeLocation.latitude || !bikeLocation.longitude) {
+      Alert.alert('Error', 'Please select a valid location.');
+      return;
+    }
+
+    // Convert the location to { lat: ..., lng: ... } format
+    const formattedLocation = {
+      lat: bikeLocation.latitude,
+      lng: bikeLocation.longitude,
+    };
+
+    // Navigate to the next page with properly formatted data
     navigation.navigate('AddCombinationLock', {
       bikeName,
       rentalPrice,
-      currentLocation: bikeLocation,
+      currentLocation: formattedLocation, // Pass formatted location
       images,
     });
   };
@@ -157,7 +170,7 @@ const AddBicycleDetails = ({ navigation }) => {
         </View>
       </ScrollView>
 
-      {/* Next Button - Sticky at the Bottom with Same Background Color */}
+      {/* Next Button - Sticky at the Bottom */}
       <View className="absolute bottom-0 left-0 right-0 p-4 bg-[#F3F4F6] border-t border-gray-200">
         <TouchableOpacity
           onPress={handleNext}

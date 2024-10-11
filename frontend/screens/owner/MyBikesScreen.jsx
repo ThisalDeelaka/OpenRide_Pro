@@ -93,7 +93,9 @@ const MyBikesScreen = () => {
           </>
         ) : (
           <>
-            <Text className="text-xl font-semibold">Location: {item.currentLocation.lat}, {item.currentLocation.lng}</Text>
+            <Text className="text-xl font-semibold">
+              Location: {item.currentLocation ? `${item.currentLocation.lat}, ${item.currentLocation.lng}` : 'Location not available'}
+            </Text>
             <Text className="text-lg">Price: ${item.rentalPrice}/hour</Text>
             <Text className="text-base">Status: {item.status}</Text>
             <Text className="text-base">Combination Lock: {item.combinationLock}</Text>
