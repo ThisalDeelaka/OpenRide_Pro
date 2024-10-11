@@ -38,6 +38,11 @@ const DrawerMenu = ({ visible, onClose,navigation }) => {
             <Text className="ml-4 text-lg text-[#175E5E]">FAQ</Text>
           </TouchableOpacity>
 
+          <TouchableOpacity className="flex-row items-center mb-4" onPress={() => navigation.navigate("IncidentScreen")}>
+            <Ionicons name="help-circle-outline" size={22} color="#175E5E" />
+            <Text className="ml-4 text-lg text-[#175E5E]">Incidents</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity className="flex-row items-center" onPress={() => navigation.navigate("SupportChat")}>
             <Ionicons name="chatbox-outline" size={22} color="#175E5E" />
             <Text className="ml-4 text-lg text-[#175E5E]">Support Chat</Text>

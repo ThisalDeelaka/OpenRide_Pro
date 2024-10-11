@@ -23,7 +23,8 @@ const DrawerMenu = ({ visible, onClose, navigation }) => {
             { name: "AdminMaintain", icon: "construct-outline", label: "Maintenance" },
             { name: "AllUsers", icon: "people-outline", label: "All Users" },
             { name: "AllOwners", icon: "business-outline", label: "All Owners" },
-            { name: "Fields", icon: "leaf-outline", label: "Fields" }
+            { name: "Fields", icon: "leaf-outline", label: "Fields" },
+            {name: "AdminSupportChat", icon: "chatbox-ellipses-outline", label: "Support Chat"},
           ].map((item, index) => (
             <TouchableOpacity 
               key={index} 

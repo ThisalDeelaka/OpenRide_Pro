@@ -6,6 +6,7 @@ const rideRoutes = require("./routes/rideRoutes");
 const incidentRoutes = require("./routes/incidentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const bikeRoutes = require("./routes/bikeRoutes");
+const massageRoutes = require("./routes/massageRoutes");
 require("dotenv").config();
 
 const app = express();
@@ -32,6 +33,7 @@ connectDB();
 app.use("/api/users", userRoutes);
 app.use("/api/rides", rideRoutes);
 app.use("/api/incidents", incidentRoutes);
+app.use("/api/massage", massageRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/bikes", bikeRoutes);
 

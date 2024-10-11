@@ -19,6 +19,7 @@ import MyBikesScreen from "../screens/owner/MyBikesScreen";
 
 import HomeScreen from "../screens/user/HomeScreen";
 import SupportChatScreen from "../screens/incident/SupportChatScreen";
+import AdminSupportScreen from "../screens/admin/AdminSupportChat";
 import HistoryScreen from "../screens/user/HistoryScreen";
 import FAQScreens from "../screens/user/FAQScreen";
 import MyWalletScreen from "../screens/user/MyWalletScreen";
@@ -144,7 +145,14 @@ const MainNavigator = () => {
     component={SupportChatScreen}
     options={{ headerShown: false }}
     />
+    <Stack.Screen
+    name="AdminSupportChat"
+    component={AdminSupportScreen}
+    options={{ headerShown: false }}
+    />
+    
   </Stack.Navigator>
+  
   );
 };
 
