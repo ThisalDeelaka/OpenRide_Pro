@@ -23,9 +23,6 @@ import HistoryScreen from "../screens/user/HistoryScreen";
 import FAQScreens from "../screens/user/FAQScreen";
 import MyWalletScreen from "../screens/user/MyWalletScreen";
 
-
-
-
 const Stack = createStackNavigator();
 
 const MainNavigator = () => {

@@ -1,7 +1,7 @@
 import React  from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableWithoutFeedback, Keyboard, TextInput, TouchableOpacity,Modal } from 'react-native';
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { useState } from 'react';
+import { View, Text, SafeAreaView, TouchableWithoutFeedback, Keyboard, TextInput, TouchableOpacity,Modal, Platform, InputAccessoryView } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import { useState,useEffect } from 'react';
 
 const DrawerMenu = ({ visible, onClose,navigation }) => {
   return (
@@ -52,15 +52,17 @@ const DrawerMenu = ({ visible, onClose,navigation }) => {
   );
 };
 
-function MassageInput() {
+function MassageInput( {massage, setMassage, onSend} ) {
   return (
     <View className="px-2 pb-2 bg-white flex-row items-center">
       <TextInput
         placeholder="Massage..."
         placeholderTextColor="#909090"
         className="flex-1 px-2 border border-gray-300 bg-white h-12"
+        value={massage}
+        onChangeText={setMassage}
       />
-      <TouchableOpacity>
+      <TouchableOpacity onPress={onSend}>
         <Ionicons name="send" size={30} color="#175E5E" style={{ marginHorizontal: 12 }} />
       </TouchableOpacity>
     </View>
@@ -69,6 +71,18 @@ function MassageInput() {
 
 const SupportChatScreen = ({userData,navigation}) => {
   const [isDrawerVisible, setDrawerVisible] = useState(false); // Manage drawer visibility
+  const [massage,setMassage] = useState('');
+
+  function onSend() {
+    console.log(massage)
+    const cleanmsg = massage.replace(/\s/g, '').trim();
+    if (cleanmsg === '') {
+      return;
+    }
+    setMassage('');
+
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-gray-50 px-5 mt-5">
       <DrawerMenu visible={isDrawerVisible} onClose={() => setDrawerVisible(false)} navigation={navigation} />
@@ -90,8 +104,16 @@ const SupportChatScreen = ({userData,navigation}) => {
         </View>
       </TouchableWithoutFeedback>
 
-      <MassageInput />
-
+      {/* render MassageInput alter to the ios */}
+      {Platform.OS === 'ios'? (
+        <InputAccessoryView>
+          <MassageInput 
+          massage={massage} setMassage={setMassage} onSend={onSend} />
+        </InputAccessoryView>
+      ):(
+      <MassageInput massage={massage} setMassage={setMassage} onSend={onSend} />
+      )}
+      
     </SafeAreaView>
   );
 };
