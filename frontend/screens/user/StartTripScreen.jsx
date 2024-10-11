@@ -1,12 +1,31 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import BikeImage from "../../assets/bike.png"; 
+import api from "../../services/api";
+import * as Location from "expo-location"; // Import Location from expo
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const StartTripScreen = ({ route, navigation }) => {
-  const { bikeId, bikeLocation } = route.params; // Get bike info passed from the previous screen
+  const { bikeId } = route.params; // Get bike info passed from the previous screen
   const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState(null); // State to store userId
+
+  // Retrieve userId from AsyncStorage
+  useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('user');
+        const parsedUserData = JSON.parse(userData);
+        if (parsedUserData && parsedUserData.id) {
+          setUserId(parsedUserData.id); // Set userId from AsyncStorage
+        }
+      } catch (error) {
+        console.error("Error fetching userId from AsyncStorage:", error);
+      }
+    };
+
+    getUserId(); // Call the function on component mount
+  }, []);
 
   const handleStartRide = async () => {
     try {
@@ -16,6 +35,7 @@ const StartTripScreen = ({ route, navigation }) => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert("Permission denied", "Allow location access to start the ride.");
+        setIsLoading(false);
         return;
       }
 
@@ -25,8 +45,16 @@ const StartTripScreen = ({ route, navigation }) => {
         lng: location.coords.longitude,
       };
 
-      // Send the start ride request to the backend
-      const response = await axios.post("backend-url", {
+      // Check if userId is available
+      if (!userId) {
+        Alert.alert("Error", "User ID not found.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Send the start ride request to the backend with userId, bikeId, and startLocation
+      const response = await api.post("/rides/start", {
+        userId, // Include userId in the request
         bikeId,
         startLocation,
       });
@@ -36,7 +64,9 @@ const StartTripScreen = ({ route, navigation }) => {
         Alert.alert("Ride Started", "You have successfully started the ride.");
 
         // Navigate to another screen (e.g., a ride tracking screen) if needed
-        navigation.navigate("RideTrackingScreen", { rideId, bikeLocation });
+        navigation.navigate("RideTrackingScreen", { rideId, startLocation });
+      } else {
+        Alert.alert("Error", "Failed to start the ride.");
       }
     } catch (error) {
       console.error("Error starting the ride: ", error);
@@ -55,19 +85,7 @@ const StartTripScreen = ({ route, navigation }) => {
           <Ionicons name="arrow-back-outline" size={30} color="#FFF" />
         </TouchableOpacity>
 
-        {/* "Your Bike" Section */}
-        <TouchableOpacity className="bg-[#DAEBF0] px-4 py-2 rounded-full flex-row items-center">
-          <Ionicons name="bicycle-outline" size={20} color="#175E5E" />
-          <Text className="text-[#175E5E] ml-2">Your Bike</Text>
-        </TouchableOpacity>
-
         <View style={{ width: 30 }} /> {/* Empty View for alignment */}
-      </View>
-
-      {/* Map Section (Optional if you're showing a map) */}
-      <View className="flex-1">
-        {/* Placeholder for map or bike details */}
-        <Image source={require('../../assets/map.png')} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
       </View>
 
       {/* Bike Info and Start Trip Section */}
@@ -76,7 +94,6 @@ const StartTripScreen = ({ route, navigation }) => {
 
         {/* Bike Details */}
         <View className="flex-row items-center justify-between mt-4">
-          <Image source={BikeImage} className="w-24 h-24 rounded-lg" />
           <View className="ml-4">
             <Text className="text-xl font-semibold">Bike Hoop</Text>
             <Text className="text-gray-600 mt-1">3.2 km</Text>

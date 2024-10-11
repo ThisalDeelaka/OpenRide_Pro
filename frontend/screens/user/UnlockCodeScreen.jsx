@@ -4,7 +4,8 @@ import { Ionicons } from "@expo/vector-icons";
 import LockImage from "../../assets/unlock.png"; 
 
 const UnlockCodeScreen = ({ route, navigation }) => {
-  const { unlockCode } = route.params; 
+  const { unlockCode,bikeId } = route.params;
+  console.log('Unlock Code:', unlockCode);
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -49,7 +50,7 @@ const UnlockCodeScreen = ({ route, navigation }) => {
 
         {/* Done Button */}
         <TouchableOpacity
-          onPress={() => navigation.navigate('Home')}  // Assuming 'Home' is the destination
+          onPress={() => navigation.navigate('StartTripScrean', { bikeId })}  // Assuming 'Home' is the destination
           style={{ backgroundColor: '#202A43', paddingVertical: 16, borderRadius: 50 }}
         >
           <Text style={{ textAlign: 'center', color: 'white', fontSize: 18, fontWeight: 'bold' }}>Done</Text>

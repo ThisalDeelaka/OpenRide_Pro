@@ -39,6 +39,24 @@ exports.getAllBikes = async (req, res) => {
   }
 };
 
+// Get bike by ID
+exports.getBikeById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const bike = await Bike.findById(id).populate("ownerId");
+
+    if (!bike) {
+      return res.status(404).json({ message: "Bike not found" });
+    }
+
+    res.json(bike); // Send the bike object, including the combination lock
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 // Update bike status (for maintenance, etc.)
 exports.updateBikeStatus = async (req, res) => {
   const { bikeId, status } = req.body;

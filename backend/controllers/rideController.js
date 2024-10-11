@@ -3,7 +3,7 @@ const Bike = require('../models/Bike');
 
 // Start a new ride
 exports.startRide = async (req, res) => {
-  const { bikeId, startLocation } = req.body;
+  const { userId,bikeId, startLocation } = req.body;
   try {
     const bike = await Bike.findById(bikeId);
     if (bike.status !== 'available') {
@@ -11,7 +11,7 @@ exports.startRide = async (req, res) => {
     }
 
     const newRide = new Ride({
-      userId: req.session.userId,
+      userId,
       bikeId,
       startLocation
     });

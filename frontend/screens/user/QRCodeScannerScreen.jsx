@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Ionicons } from "@expo/vector-icons";
-
+import api from "../../services/api";
 const QRCodeScannerScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
@@ -14,20 +14,26 @@ const QRCodeScannerScreen = ({ navigation }) => {
     })();
   }, []);
 
-
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
     
-    Alert.alert("QR Code Scanned", `Unlock Code: ${data}`, [
-      {
-        text: "OK",
-        onPress: () => {
-          setScanned(false);
-         
-          navigation.navigate("UnlockCodeScreen", { unlockCode: data });
-        },
-      },
-    ]);
+    try {
+      // Fetch bike details from the backend
+      const response = await api.get(`/bikes/${data}`);
+      const bike = response.data; // This should be the bike object with combination lock
+      console.log("Bike details:", bike);
+      if (bike.combinationLock) {
+        // Navigate to another screen with the combination lock
+        navigation.navigate("UnlockCodeScreen", { unlockCode: bike.combinationLock,bikeId: bike._id });
+      } else {
+        Alert.alert("Error", "Bike details not found.");
+      }
+    } catch (error) {
+      console.error("Error fetching bike details:", error);
+      Alert.alert("Error", "Could not retrieve bike information.");
+    } finally {
+      setScanned(false); // Reset scanner for the next scan
+    }
   };
 
   if (hasPermission === null) {

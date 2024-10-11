@@ -3,6 +3,7 @@ const {
   registerBike,
   updateBikeStatus,
   getAllBikes,
+  getBikeById,
   deleteBike,
   getBikesByOwner,
   deleteBikeByowner,
@@ -11,6 +12,7 @@ const {
 const router = express.Router();
 
 router.get("/", getAllBikes);
+router.get("/:id", getBikeById);
 router.post("/register", registerBike);
 router.put("/status", updateBikeStatus);
 router.delete("/:bikeId", deleteBike); // Handle bike deletion

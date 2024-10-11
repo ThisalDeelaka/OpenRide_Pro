@@ -19,7 +19,7 @@ import MyBikesScreen from "../screens/owner/MyBikesScreen";
 import BikeDirectionsScreen from "../screens/user/BikeDirectionsScreen";
 import QRCodeScannerScreen from "../screens/user/QRCodeScannerScreen";
 import UnlockCodeScreen from "../screens/user/UnlockCodeScreen";
-
+import StartTripScrean from "../screens/user/StartTripScreen";
 
 
 const Stack = createStackNavigator();
@@ -130,6 +130,11 @@ const MainNavigator = () => {
       <Stack.Screen
         name="UnlockCodeScreen"
         component={UnlockCodeScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="StartTripScrean"
+        component={StartTripScrean}
         options={{ headerShown: false }}
       />
 
