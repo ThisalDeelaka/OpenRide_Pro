@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Modal, View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
+import { Modal, View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../services/api";
-
+import BikeImage from "../../assets/bike.png"; // Assuming the bike image is in the assets folder
 
 const DrawerMenu = ({ visible, onClose, navigation }) => {
   return (
@@ -16,7 +16,7 @@ const DrawerMenu = ({ visible, onClose, navigation }) => {
     >
       <View className="flex-1 flex-row">
         {/* Sidebar Drawer */}
-        <View className="w-64 bg-white h-full p-5">
+        <View className="w-64 bg-white h-full p-5 shadow-lg">
           <TouchableOpacity onPress={onClose} className="mb-6">
             <Ionicons name="close" size={30} color="#175E5E" />
           </TouchableOpacity>
@@ -28,7 +28,7 @@ const DrawerMenu = ({ visible, onClose, navigation }) => {
           </TouchableOpacity>
 
           <TouchableOpacity className="flex-row items-center mb-4" onPress={() => navigation.navigate("MyBikes")}>
-            <Ionicons name="bike" size={22} color="#175E5E" />
+            <Ionicons name="bicycle-outline" size={22} color="#175E5E" />
             <Text className="ml-4 text-lg text-[#175E5E]">My Bikes</Text>
           </TouchableOpacity>
 
@@ -136,11 +136,17 @@ const OwnerHomeScreen = ({ navigation }) => {
               className="flex-row items-center bg-white p-3 mb-3 rounded-lg shadow-md"
               onPress={() => navigation.navigate("BikeDetails", { bikeId: item._id })}
             >
+              <Image
+                source={BikeImage}
+                className="w-20 h-20 rounded-lg mr-4"
+                resizeMode="contain"
+              />
               <View className="flex-1">
                 <Text className="text-lg font-semibold text-[#175E5E]">
                   {item.name || `Bike ${item._id}`}  {/* Bike Name */}
                 </Text>
                 <Text className="text-gray-600">Status: {item.isAvailable ? "Available" : "Not Available"}</Text>
+                <Text className="text-gray-600">Rental Price: ${item.rentalPrice}</Text>
               </View>
               <Ionicons name="chevron-forward" size={24} color="#175E5E" />
             </TouchableOpacity>
