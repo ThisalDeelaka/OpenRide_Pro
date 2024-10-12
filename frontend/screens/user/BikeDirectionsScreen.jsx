@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator, TouchableOpacity, Alert } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from 'expo-location';
+import axios from 'axios'; // For making API calls
 import { Ionicons } from "@expo/vector-icons";
 
 const BikeDirectionsScreen = ({ route, navigation }) => {
@@ -9,8 +10,9 @@ const BikeDirectionsScreen = ({ route, navigation }) => {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const GOOGLE_MAPS_API_KEY = 'AIzaSyB0zc090Yi-GBjwOs7kG6iqVPR7XJPoDvo'; // Replace with your Google Maps API Key
 
-  // Fetch user's current location
+  // Fetch user's current location and directions
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -34,23 +36,75 @@ const BikeDirectionsScreen = ({ route, navigation }) => {
         return;
       }
 
-      const mappedBikeLocation = {
-        latitude: bikeLocation.lat,
-        longitude: bikeLocation.lng,
-      };
-
       setCurrentLocation(userLocation);
 
-      // Generate a simple straight-line polyline between user and bike
-      const coordinates = [
-        { latitude: userLocation.latitude, longitude: userLocation.longitude },
-        { latitude: mappedBikeLocation.latitude, longitude: mappedBikeLocation.longitude },
-      ];
-
-      setRouteCoordinates(coordinates);
-      setLoading(false);
+      // Fetch directions from Google Directions API
+      fetchDirections(userLocation, {
+        latitude: bikeLocation.lat,
+        longitude: bikeLocation.lng,
+      });
     })();
   }, []);
+
+  // Function to fetch directions from Google API
+  const fetchDirections = async (origin, destination) => {
+    const originCoords = `${origin.latitude},${origin.longitude}`;
+    const destinationCoords = `${destination.latitude},${destination.longitude}`;
+
+    try {
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${originCoords}&destination=${destinationCoords}&key=${GOOGLE_MAPS_API_KEY}`
+      );
+
+      if (response.data.routes && response.data.routes.length > 0) {
+        const points = decodePolyline(response.data.routes[0].overview_polyline.points);
+        setRouteCoordinates(points);
+      } else {
+        console.error('No routes found:', response.data);
+        Alert.alert('No Route', 'Unable to find a route between the locations.');
+      }
+      
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching directions:', error);
+      Alert.alert('Error', 'Failed to fetch directions. Please try again later.');
+      setLoading(false);
+    }
+  };
+
+  // Decode polyline to get list of coordinates
+  const decodePolyline = (t) => {
+    let points = [];
+    let index = 0, len = t.length;
+    let lat = 0, lng = 0;
+
+    while (index < len) {
+      let b, shift = 0, result = 0;
+      do {
+        b = t.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      const dlat = ((result & 1) ? ~(result >> 1) : (result >> 1));
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+      do {
+        b = t.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      const dlng = ((result & 1) ? ~(result >> 1) : (result >> 1));
+      lng += dlng;
+
+      points.push({
+        latitude: lat / 1e5,
+        longitude: lng / 1e5,
+      });
+    }
+    return points;
+  };
 
   if (loading || !currentLocation) {
     return <ActivityIndicator size="large" color="#175E5E" />;
@@ -100,7 +154,7 @@ const BikeDirectionsScreen = ({ route, navigation }) => {
           />
         )}
 
-        {/* Straight Line Polyline */}
+        {/* Polyline for Directions */}
         {routeCoordinates.length > 0 && (
           <Polyline
             coordinates={routeCoordinates}

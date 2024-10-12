@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Modal,
@@ -9,6 +9,7 @@ import {
   Alert,
   ActivityIndicator,
   Image,
+  RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -90,34 +91,41 @@ const DrawerMenu = ({ visible, onClose, navigation }) => {
 const OwnerHomeScreen = ({ navigation }) => {
   const [bikes, setBikes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false); // Refresh state
   const [isDrawerVisible, setDrawerVisible] = useState(false); // Manage drawer visibility
   const [ownerName, setOwnerName] = useState(""); // Store owner's name
 
   // Fetch the list of bikes owned by the owner
-  useEffect(() => {
-    const fetchBikes = async () => {
-      try {
-        const storedUser = await AsyncStorage.getItem("user");
-        if (storedUser) {
-          const user = JSON.parse(storedUser);
-          setOwnerName(user.name); // Set owner's name from AsyncStorage
+  const fetchBikes = async () => {
+    try {
+      const storedUser = await AsyncStorage.getItem("user");
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        setOwnerName(user.name); // Set owner's name from AsyncStorage
 
-          const response = await api.get(`/bikes/owner/${user.id}`);
-          if (response.data && Array.isArray(response.data)) {
-            setBikes(response.data);
-          } else {
-            throw new Error("Invalid data format");
-          }
+        const response = await api.get(`/bikes/owner/${user.id}`);
+        if (response.data && Array.isArray(response.data)) {
+          setBikes(response.data);
+        } else {
+          throw new Error("Invalid data format");
         }
-      } catch (error) {
-        console.error("Error fetching bikes:", error);
-        Alert.alert("Error", "Failed to load bikes");
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching bikes:", error);
+      Alert.alert("Error", "Failed to load bikes");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchBikes();
+  }, []);
+
+  // Pull-to-refresh functionality
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchBikes().finally(() => setRefreshing(false));
   }, []);
 
   return (
@@ -135,11 +143,8 @@ const OwnerHomeScreen = ({ navigation }) => {
           <Ionicons name="menu-outline" size={30} color="#175E5E" />
         </TouchableOpacity>
         <Text className="text-3xl font-bold text-teal-800">
-          Welcome, {ownerName}! {/* Display owner's name */}
+          Welcome, {ownerName}! 
         </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("OwnerProfile")}>
-          <Ionicons name="person-outline" size={30} color="#175E5E" />
-        </TouchableOpacity>
       </View>
 
       {/* Stats Overview */}
@@ -171,30 +176,32 @@ const OwnerHomeScreen = ({ navigation }) => {
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <TouchableOpacity
-  className="flex-row items-center bg-white p-3 mb-3 rounded-lg shadow-md"
-  onPress={() => navigation.navigate("BikeDetails", { bike: item })} // Pass the whole bike object
->
-  <Image
-    source={BikeImage}
-    className="w-20 h-20 rounded-lg mr-4"
-    resizeMode="contain"
-  />
-  <View className="flex-1">
-    {/* Display bike name */}
-    <Text className="text-lg font-semibold text-[#175E5E]">
-      {item.bikeName || `Bike ${item._id}`}
-    </Text>
-    <Text className="text-gray-600">
-      Status: {item.isAvailable ? "Available" : "Not Available"}
-    </Text>
-    <Text className="text-gray-600">
-      Rental Price: ${item.rentalPrice}
-    </Text>
-  </View>
-  <Ionicons name="chevron-forward" size={24} color="#175E5E" />
-</TouchableOpacity>
-
+              className="flex-row items-center bg-white p-3 mb-3 rounded-lg shadow-md"
+              onPress={() => navigation.navigate("BikeDetails", { bike: item })}
+            >
+              <Image
+                source={BikeImage}
+                className="w-20 h-20 rounded-lg mr-4"
+                resizeMode="contain"
+              />
+              <View className="flex-1">
+                {/* Display bike name */}
+                <Text className="text-lg font-semibold text-[#175E5E]">
+                  {item.bikeName || `Bike ${item._id}`}
+                </Text>
+                <Text className="text-gray-600">
+                  Status: {item.isAvailable ? "Available" : "Not Available"}
+                </Text>
+                <Text className="text-gray-600">
+                  Rental Price: ${item.rentalPrice}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={24} color="#175E5E" />
+            </TouchableOpacity>
           )}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           showsVerticalScrollIndicator={false}
         />
       ) : (

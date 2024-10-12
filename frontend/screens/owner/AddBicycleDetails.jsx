@@ -105,23 +105,27 @@ const AddBicycleDetails = ({ navigation }) => {
         <View>
           <Text className="text-lg font-medium text-[#1F2937] mb-2">Bike Name</Text>
           <TextInput
-            placeholder="Enter Bike Name"
-            value={bikeName}
-            onChangeText={setBikeName}
-            className="bg-white p-4 rounded-xl shadow-lg text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#175E5E]"
-          />
+  placeholder="Enter Bike Name"
+  value={bikeName}
+  onChangeText={setBikeName}
+  className="bg-white p-4 rounded-xl shadow-lg text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#175E5E]"
+  style={{ color: 'black' }} // This will set the input text color to black
+/>
+
         </View>
 
         {/* Rental Price Input */}
         <View className="mt-4">
           <Text className="text-lg font-medium text-[#1F2937] mb-2">Rental Price ($)</Text>
           <TextInput
-            placeholder="Enter Rental Price"
-            value={rentalPrice}
-            onChangeText={setRentalPrice}
-            keyboardType="numeric"
-            className="bg-white p-4 rounded-xl shadow-lg text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#175E5E]"
-          />
+  placeholder="Enter Rental Price"
+  value={rentalPrice}
+  onChangeText={setRentalPrice}
+  keyboardType="numeric"
+  className="bg-white p-4 rounded-xl shadow-lg text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#175E5E]"
+  style={{ color: 'black' }} // This will set the input text color to black
+/>
+
         </View>
 
         {/* Bike Location on Map */}

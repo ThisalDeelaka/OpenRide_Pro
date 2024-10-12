@@ -53,6 +53,7 @@ const AddCombinationLock = ({ route, navigation }) => {
             onChangeText={setCombinationLock}
             keyboardType="numeric"
             className="bg-white p-4 rounded-xl shadow-lg text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#175E5E]"
+            style={{ color: 'black' }}
           />
         </View>
       </ScrollView>

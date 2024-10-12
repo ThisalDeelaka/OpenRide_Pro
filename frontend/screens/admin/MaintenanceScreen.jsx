@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Switch, TouchableOpacity, TextInput, ActivityIndicator, Alert, Image } from 'react-native';
+import React, { useState, useEffect } from 'react'; 
+import { View, Text, FlatList, Switch, TouchableOpacity, TextInput, ActivityIndicator, Alert, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
@@ -41,6 +41,17 @@ const AdminMaintenanceScreen = ({ navigation }) => {
     setFilteredBikes(filtered);
   };
 
+  // Handle the input change and prevent invalid values (NaN)
+  const handleMaintenanceHoursChange = (value) => {
+    const parsedValue = parseInt(value);
+    if (!isNaN(parsedValue)) {
+      setMaintenanceHours(parsedValue);
+    } else if (value === '') {
+      // If the input is cleared, set the maintenance hours to 0
+      setMaintenanceHours(0);
+    }
+  };
+
   // Toggle maintenance status of a bike
   const toggleMaintenance = async (bikeId, currentStatus) => {
     try {
@@ -79,62 +90,68 @@ const AdminMaintenanceScreen = ({ navigation }) => {
         <Text className="text-3xl font-bold ml-4 text-teal-800">Maintenance</Text>
       </View>
 
-      {/* Input for Custom Maintenance Hours Threshold */}
-      <View className="flex-row items-center mb-6">
-        <Text className="text-lg mr-4 text-teal-800">Maintenance After (hours):</Text>
-        <TextInput
-          value={String(maintenanceHours)}
-          onChangeText={(value) => setMaintenanceHours(parseInt(value))}
-          keyboardType="numeric"
-          className="border p-2 w-20 text-center"
-        />
-        <TouchableOpacity className="bg-[#175E5E] p-2 rounded-lg ml-4" onPress={filterBikes}>
-          <Text className="text-white text-lg">Filter</Text>
-        </TouchableOpacity>
-      </View>
+      {/* KeyboardAvoidingView to handle keyboard interactions */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        {/* Input for Custom Maintenance Hours Threshold */}
+        <View className="flex-row items-center mb-6">
+          <Text className="text-lg mr-4 text-teal-800">Maintenance After (hours):</Text>
+          <TextInput
+            value={String(maintenanceHours)}
+            onChangeText={handleMaintenanceHoursChange} // Validate input here
+            keyboardType="numeric"
+            className="border p-2 w-20 text-center"
+          />
+          <TouchableOpacity className="bg-[#175E5E] p-2 rounded-lg ml-4" onPress={filterBikes}>
+            <Text className="text-white text-lg">Filter</Text>
+          </TouchableOpacity>
+        </View>
 
-      {loading ? (
-        <ActivityIndicator size="large" color="#175E5E" />
-      ) : error ? (
-        <Text className="text-red-500 text-lg mb-4">{error}</Text>
-      ) : filteredBikes.length === 0 ? (
-        <Text className="text-lg text-teal-800">No bikes exceed the maintenance hours</Text>
-      ) : (
-        <FlatList
-          data={filteredBikes}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => (
-            <View className="bg-white p-4 mb-4 rounded-lg shadow-md flex-row items-center">
-              {/* Bike Image */}
-              <Image
-                source={BikeImage}
-                className="w-24 h-24 rounded-lg mr-4"
-                resizeMode="contain"
-              />
-              
-              {/* Bike Details */}
-              <View className="flex-1">
-                <Text className="text-lg font-semibold text-teal-800">{item.name}</Text>
-                <Text className="text-gray-600">Owner: {item.ownerId.name || 'Unknown Owner'}</Text>
-                <Text className="text-gray-600">Run Hours: {item.runHours} hrs</Text>
-              </View>
-
-              {/* Toggle Maintenance Status */}
-              <View className="flex-row items-center">
-                <Text className={`mr-2 ${item.isUnderMaintenance ? 'text-red-600' : 'text-[#175E5E]'}`}>
-                  {item.isUnderMaintenance ? 'Under Maintenance' : 'Available'}
-                </Text>
-                <Switch
-                  value={item.isUnderMaintenance}
-                  onValueChange={() => toggleMaintenance(item._id, item.isUnderMaintenance)}
-                  trackColor={{ false: '#ccc', true: '#FF6B6B' }} // Red color for under maintenance
-                  thumbColor={item.isUnderMaintenance ? '#FF6B6B' : '#f4f3f4'}
+        {loading ? (
+          <ActivityIndicator size="large" color="#175E5E" />
+        ) : error ? (
+          <Text className="text-red-500 text-lg mb-4">{error}</Text>
+        ) : filteredBikes.length === 0 ? (
+          <Text className="text-lg text-teal-800">No bikes exceed the maintenance hours</Text>
+        ) : (
+          <FlatList
+            data={filteredBikes}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <View className="bg-white p-4 mb-4 rounded-lg shadow-md flex-row items-center">
+                {/* Bike Image */}
+                <Image
+                  source={BikeImage}
+                  className="w-24 h-24 rounded-lg mr-4"
+                  resizeMode="contain"
                 />
+                
+                {/* Bike Details */}
+                <View className="flex-1">
+                  <Text className="text-lg font-semibold text-teal-800">{item.name}</Text>
+                  <Text className="text-gray-600">Owner: {item.ownerId.name || 'Unknown Owner'}</Text>
+                  <Text className="text-gray-600">Run Hours: {item.runHours} hrs</Text>
+                </View>
+
+                {/* Toggle Maintenance Status */}
+                <View className="flex-row items-center">
+                  <Text className={`mr-2 ${item.isUnderMaintenance ? 'text-red-600' : 'text-[#175E5E]'}`}>
+                    {item.isUnderMaintenance ? 'Under Maintenance' : 'Available'}
+                  </Text>
+                  <Switch
+                    value={item.isUnderMaintenance}
+                    onValueChange={() => toggleMaintenance(item._id, item.isUnderMaintenance)}
+                    trackColor={{ false: '#ccc', true: '#FF6B6B' }} // Red color for under maintenance
+                    thumbColor={item.isUnderMaintenance ? '#FF6B6B' : '#f4f3f4'}
+                  />
+                </View>
               </View>
-            </View>
-          )}
-        />
-      )}
+            )}
+          />
+        )}
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
