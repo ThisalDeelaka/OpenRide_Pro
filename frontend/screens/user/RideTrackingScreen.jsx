@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator,Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import api from "../../services/api";
@@ -54,37 +54,53 @@ const RideTrackingScreen = ({ route, navigation }) => {
   };
 
   const handleEndTrip = async () => {
-    try {
-      // Fetch the current location
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-      
-      const { latitude, longitude } = location.coords;
-
-      // Make an API request to the backend to end the ride
-      const response = await api.post(`/rides/end`, {
-        rideId,
-        endLocation: { lat: latitude, lng: longitude },
-      });
-
-      // Handle the response
-      if (response.data) {
-        console.log("Trip ended successfully:", response.data);
-        const { totalFare, distance } = response.data;
-        
-        // Navigate to EndTripScreen and pass the necessary data
-        navigation.navigate("EndTripScreen", {
-          rideId,
-          totalFare,
-          distance,
-          timeee: formatTime(timer), // Format the time and pass it
-        });
-      }
-    } catch (error) {
-      console.error("Error ending the trip:", error);
-    }
+    Alert.alert(
+      "Confirm End Trip",
+      "Are you sure you want to end the trip?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Confirm",
+          onPress: async () => {
+            try {
+              // Fetch the current location
+              const location = await Location.getCurrentPositionAsync({
+                accuracy: Location.Accuracy.High,
+              });
+  
+              const { latitude, longitude } = location.coords;
+  
+              // Make an API request to the backend to end the ride
+              const response = await api.post(`/rides/end`, {
+                rideId,
+                endLocation: { lat: latitude, lng: longitude },
+              });
+  
+              // Handle the response
+              if (response.data) {
+                console.log("Trip ended successfully:", response.data);
+                const { totalFare, distance } = response.data;
+  
+                // Navigate to EndTripScreen and pass the necessary data
+                navigation.navigate("EndTripScreen", {
+                  rideId,
+                  totalFare,
+                  distance,
+                  timeee: formatTime(timer), // Format the time and pass it
+                });
+              }
+            } catch (error) {
+              console.error("Error ending the trip:", error);
+            }
+          },
+        },
+      ]
+    );
   };
+  
 
   return (
     <View className="flex-1 bg-white">

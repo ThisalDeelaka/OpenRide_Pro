@@ -39,21 +39,8 @@ const EndTripScreen = ({ route, navigation }) => {
   };
 
   const handleEndTrip = async () => {
-    try {
-      setIsLoading(true);
-      const response = await api.post("/rides/end", { rideId });
-      if (response.status === 200) {
-        Alert.alert("Trip Ended", "Your trip has ended successfully.");
-        navigation.navigate("PaymentScreen"); // Navigate to the home screen after ending the trip
-      } else {
-        Alert.alert("Error", "Failed to end the trip.");
-      }
-    } catch (error) {
-      console.error("Error ending trip:", error);
-      Alert.alert("Error", "Failed to end the trip.");
-    } finally {
-      setIsLoading(false);
-    }
+    navigation.navigate("PaymentScreen",{totalSpend}); // Navigate to the home screen after ending the trip
+
   };
 
   return (
